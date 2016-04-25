@@ -2,6 +2,8 @@
 
 # Data Science 2016
 
+
+
 [![Build Status](https://travis-ci.org/csula/datascience-spring-2016.svg?branch=master)](https://travis-ci.org/csula/datascience-spring-2016)
 
 Welcome to the Spring 2016 Data Science class!
