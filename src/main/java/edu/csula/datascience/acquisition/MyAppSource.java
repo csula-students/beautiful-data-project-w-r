@@ -3,42 +3,43 @@ package edu.csula.datascience.acquisition;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.scanner.Constant;
-import com.sun.org.apache.xml.internal.utils.Constants;
-
 public class MyAppSource {
     
+	private static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString()+"\\";
+	
 	public void Download(String fileURL, String fileName){
 		
-		try {
-			URL url = new URL(fileURL);
-			FileUtils.copyURLToFile(url, new File("C:\\download\\"+fileName+".csv"));
-		} catch (IOException e) {
-			e.printStackTrace();
+		File file = new File(localPath+fileName+".csv");
+		
+		if (!file.exists()) {
+			try {
+				System.out.println("Downloading "+fileName+" ... ");
+				URL url = new URL(fileURL);
+				FileUtils.copyURLToFile(url, file);
+				System.out.println("FINISHED Downloading "+fileName+" ... ");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			System.out.println("File "+fileName+" already exist no need to download");
 		}
 	}
 	
-	public File getDownloadedFile(String fileName, String directory){
+	public File getDownloadedFile(String fileName){
 		
-		File dir = new File( directory );
-		File[] inside_directory = dir.listFiles();
+		File file = new File(localPath+fileName+".csv");
 		
-		//to check filename with csv		
-		String check = fileName + ".csv";     
-		boolean check_if_exist = new File(directory, check).exists();
-		
-		for(int i = 0; i < inside_directory.length; i++){
-			if(inside_directory[i].getName().equals(fileName + ".csv")){
-				//return "";
-			}
-			//return "";
+		if (file.exists()) {
+			return file;
 		}
-		
-		
-		return new File("C:\\download\\"+fileName);
+		return null;
 	}
+	
+	
 	
 }
