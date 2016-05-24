@@ -2,25 +2,40 @@ package edu.csula.datascience.acquisition;
 
 public class Business {
 
-	private String cityName;
+	private String BName;
+	private String Address;
+	private String City;
 	private String zipCode;
-	private String Coordinates;
+	private String GeoLocation;
 	private String Startdate;
-	private String Enddate;
 	
-	public Business(String cityName, String zipCode, String coordinates, String startdate, String enddate) {
-		this.cityName = cityName;
+	
+	public Business(String bName, String address, String city, String zipCode, String geoLocation, String startdate) {
+		this.BName = bName;
+		this.Address = address;
+		this.City = city;
 		this.zipCode = zipCode;
-		Coordinates = coordinates;
-		Startdate = startdate;
-		Enddate = enddate;
+		this.GeoLocation = geoLocation;
+		this.Startdate = startdate;
 	}
 	
-	public String getCityName() {
-		return cityName;
+	public String getBName() {
+		return BName;
 	}
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
+	public void setBName(String bName) {
+		BName = bName;
+	}
+	public String getAddress() {
+		return Address;
+	}
+	public void setAddress(String address) {
+		Address = address;
+	}
+	public String getCity() {
+		return City;
+	}
+	public void setCity(String city) {
+		City = city;
 	}
 	public String getZipCode() {
 		return zipCode;
@@ -28,23 +43,17 @@ public class Business {
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
-	public String getCoordinates() {
-		return Coordinates;
+	public String getGeoLocation() {
+		return GeoLocation;
 	}
-	public void setCoordinates(String coordinates) {
-		Coordinates = coordinates;
+	public void setGeoLocation(String geoLocation) {
+		GeoLocation = geoLocation;
 	}
 	public String getStartdate() {
 		return Startdate;
 	}
 	public void setStartdate(String startdate) {
 		Startdate = startdate;
-	}
-	public String getEnddate() {
-		return Enddate;
-	}
-	public void setEnddate(String enddate) {
-		Enddate = enddate;
 	}
 	
 }

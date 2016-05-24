@@ -2,48 +2,69 @@ package edu.csula.datascience.acquisition;
 
 public class Crime {
 	
-	private String cityName;
-	private String zipCode;
-	private String coordinates;
-	private String date;
+	private String CDate;
+	private String Description;
+	private String Street;
+	private String City;
+	private String GeoLocation;
+	private String ZipCode;
 	
-	public Crime(String cityName, String zipCode, String coordinates, String date) {
-		this.cityName = cityName;
-		this.zipCode = zipCode;
-		this.coordinates = coordinates;
-		this.date = date;
+	public Crime(String cDate, String description, String street, String city, String geoLocation, String zipCode) {
+		this.CDate = cDate;
+		this.Description = description;
+		this.Street = street;
+		this.City = city;
+		this.GeoLocation = geoLocation;
+		this.ZipCode = zipCode;
 	}
 
-	public String getCityName() {
-		return cityName;
+	public String getCDate() {
+		return CDate;
 	}
 
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
+	public void setCDate(String cDate) {
+		CDate = cDate;
+	}
+
+	public String getDescription() {
+		return Description;
+	}
+
+	public void setDescription(String description) {
+		Description = description;
+	}
+
+	public String getStreet() {
+		return Street;
+	}
+
+	public void setStreet(String street) {
+		Street = street;
+	}
+
+	public String getCity() {
+		return City;
+	}
+
+	public void setCity(String city) {
+		City = city;
+	}
+
+	public String getGeoLocation() {
+		return GeoLocation;
+	}
+
+	public void setGeoLocation(String geoLocation) {
+		GeoLocation = geoLocation;
 	}
 
 	public String getZipCode() {
-		return zipCode;
+		return ZipCode;
 	}
 
 	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
+		ZipCode = zipCode;
 	}
-
-	public String getCoordinates() {
-		return coordinates;
-	}
-
-	public void setCoordinates(String coordinates) {
-		this.coordinates = coordinates;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
+	
+	
 }

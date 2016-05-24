@@ -2,42 +2,72 @@ package edu.csula.datascience.acquisition;
 
 public class Property {
 
-	private String cityName;
-	private String zipCode;
-	private String coordinates;
-	private String establishDate;
+	private String CityName;
+	private String ZipCode;
+	private String HouseNo;
+	private String StreetName;
+	private String EffectiveDate;
+	private String GeoLocation;
 	
-	public Property(String cityName, String zipCode, String coordinates, String establishDate) {
-		super();
-		this.cityName = cityName;
-		this.zipCode = zipCode;
-		this.coordinates = coordinates;
-		this.establishDate = establishDate;
+	public Property(String cityName, String zipCode, String houseNo, String streetName, String effectiveDate,
+			String geoLocation) {
+		this.CityName = cityName;
+		this.ZipCode = zipCode;
+		this.HouseNo = houseNo;
+		this.StreetName = streetName;
+		this.EffectiveDate = effectiveDate;
+		this.GeoLocation = geoLocation;
 	}
-	
+
 	public String getCityName() {
-		return cityName;
+		return CityName;
 	}
+
 	public void setCityName(String cityName) {
-		this.cityName = cityName;
+		CityName = cityName;
 	}
+
 	public String getZipCode() {
-		return zipCode;
+		return ZipCode;
 	}
+
 	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
+		ZipCode = zipCode;
 	}
-	public String getCoordinates() {
-		return coordinates;
+
+	public String getHouseNo() {
+		return HouseNo;
 	}
-	public void setCoordinates(String coordinates) {
-		this.coordinates = coordinates;
+
+	public void setHouseNo(String houseNo) {
+		HouseNo = houseNo;
 	}
-	public String getEstablishDate() {
-		return establishDate;
+
+	public String getStreetName() {
+		return StreetName;
 	}
-	public void setEstablishDate(String establishDate) {
-		this.establishDate = establishDate;
+
+	public void setStreetName(String streetName) {
+		StreetName = streetName;
 	}
+
+	public String getEffectiveDate() {
+		return EffectiveDate;
+	}
+
+	public void setEffectiveDate(String effectiveDate) {
+		EffectiveDate = effectiveDate;
+	}
+
+	public String getGeoLocation() {
+		return GeoLocation;
+	}
+
+	public void setGeoLocation(String geoLocation) {
+		GeoLocation = geoLocation;
+	}
+	
+	
+	
 	
 }
