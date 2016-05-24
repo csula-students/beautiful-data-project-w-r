@@ -5,12 +5,13 @@ import java.util.ArrayList;
 
 public class MyAppCollector{
     
-	
-	public ArrayList mungee(File myData) {
-		return null;
-	}
-	
-	public void save(ArrayList list, String fileName){
-		
-	}
+	    public void mungee(ArrayList<String> HeaderList, File myFile) {
+	    	
+	    	
+	    }
+
+	    
+	    public void save(ArrayList<String> HeaderList,ArrayList<Object> MungedData,String fileName) {
+	    		    	
+	    }
 }
