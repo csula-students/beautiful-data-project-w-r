@@ -117,9 +117,7 @@ public class ElasticSearchExampleApp {
                         record.get("Country")
                     );
 
-                    bulkProcessor.add(new IndexRequest(indexName, typeName)
-                        .source(gson.toJson(temp))
-                    );
+                    bulkProcessor.add(new IndexRequest(indexName, typeName).source(gson.toJson(temp)));
                 }
             });
         } catch (IOException e) {

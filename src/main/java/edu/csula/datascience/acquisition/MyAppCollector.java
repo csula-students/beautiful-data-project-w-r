@@ -14,8 +14,15 @@ import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.elasticsearch.action.bulk.BulkProcessor;
+import org.elasticsearch.action.index.IndexRequest;
+
+import com.google.gson.Gson;
 
 public class MyAppCollector {
+	
+	// Gson library for sending json to elastic search
+	Gson gson = new Gson();
 	
 	
 	// Code taken from ElasticSearchExample used for reading big csv files
@@ -69,7 +76,7 @@ public class MyAppCollector {
 	}
 	
 	// Code taken from example found at https://examples.javacodegeeks.com/core-java/apache/commons/csv-commons/writeread-csv-files-with-apache-commons-csv-example/
-		public Map<String,Crime> mungeeCrime15(File csv,String[] HeaderList) {
+		public Map<String,Crime> mungeeCrime15(File csv,String[] HeaderList, BulkProcessor bulkProcessor, String indexName, String typeName) {
 
 			String dateFormat = "mm/dd/yyyy hh:mm";
 			FileReader fileReader = null;
@@ -108,7 +115,7 @@ public class MyAppCollector {
 						if (!crimes.containsKey(CrimeDate)) {
 							crimes.put(CrimeDate, crime);
 							System.out.println(crime.getCDate()+" | "+crime.getCity()+" | "+crime.getDescription()+" | "+crime.getGeoLocation()+" | "+crime.getStreet()+" | "+crime.getZipCode());
-							
+							bulkProcessor.add(new IndexRequest(indexName, typeName).source(gson.toJson(crime)));
 						}else{
 							if (!crimes.get(CrimeDate).equals(crime)) {
 								crimes.put(CrimeDate, crime);
