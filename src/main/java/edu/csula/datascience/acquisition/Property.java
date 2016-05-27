@@ -7,7 +7,7 @@ public class Property {
 	private String CityName;
 	private String ZipCode;
 	private String UnitNo;
-	private String GeoLocation;
+	private String location;
 	
 	public Property(String recordingDate, String streetName, String cityName, String zipCode, String unitNo,
 			String geoLocation) {
@@ -17,7 +17,7 @@ public class Property {
 		this.CityName = cityName;
 		this.ZipCode = zipCode;
 		this.UnitNo = unitNo;
-		this.GeoLocation = geoLocation;
+		this.location = geoLocation;
 	}
 
 	public String getRecordingDate() {
@@ -61,11 +61,11 @@ public class Property {
 	}
 
 	public String getGeoLocation() {
-		return GeoLocation;
+		return location;
 	}
 
 	public void setGeoLocation(String geoLocation) {
-		GeoLocation = geoLocation;
+		location = geoLocation;
 	}
 		
 	

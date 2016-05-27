@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +15,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-public class MyAppCollector {	
+public class MyAppCollector {
+	
 	
 	// Code taken from ElasticSearchExample used for reading big csv files
 	public Map<String,Crime> mungeeCrime04(String[] HeaderList, File csv) {
@@ -37,8 +37,9 @@ public class MyAppCollector {
 					String CDescription = record.get(HeaderList[2]);
 					String CStreet = record.get(HeaderList[3]);
 					String CCity = record.get(HeaderList[4]);
-					// TODO GeoLocation Need to convert to geoLocation object for elasticSearch
-					String CGeoLocation = record.get(HeaderList[5]) +","+ record.get(HeaderList[6]);
+					
+					// TODO GeoLocation Need to testing after inserting into elasticSearch				
+					String CGeoLocation = correctGeoPointsCrime(record.get(HeaderList[5]),record.get(HeaderList[6]));
 					
 					// Add zip code if exists and if not get it from station identifier
 					String CZipCode;
@@ -97,16 +98,22 @@ public class MyAppCollector {
 						String CDescription = record.get(HeaderList[2]);
 						String CStreet = record.get(HeaderList[3]);
 						String CCity = record.get(HeaderList[4]);
+						
 						// TODO GeoLocation Need to convert to geoLocation object for elasticSearch
-						String CGeoLocation = record.get(HeaderList[5]) +","+ record.get(HeaderList[6]);
+						String CGeoLocation = correctGeoPointsCrime(record.get(HeaderList[5]),record.get(HeaderList[6]));
+						
 						String CZipCode = FilterZipCode(record.get(HeaderList[1]));
 
 						Crime crime = new Crime(CrimeDate, CDescription, CStreet, CCity, CGeoLocation, CZipCode);
 						if (!crimes.containsKey(CrimeDate)) {
 							crimes.put(CrimeDate, crime);
+							System.out.println(crime.getCDate()+" | "+crime.getCity()+" | "+crime.getDescription()+" | "+crime.getGeoLocation()+" | "+crime.getStreet()+" | "+crime.getZipCode());
+							
 						}else{
 							if (!crimes.get(CrimeDate).equals(crime)) {
 								crimes.put(CrimeDate, crime);
+								System.out.println(crime.getCDate()+" | "+crime.getCity()+" | "+crime.getDescription()+" | "+crime.getGeoLocation()+" | "+crime.getStreet()+" | "+crime.getZipCode());
+								
 							}
 						}
 					}
@@ -133,6 +140,7 @@ public class MyAppCollector {
 
 			Map<String,Business> businesses = new HashMap<String,Business>();
 			String dateFormat = "mm/dd/yyyy";
+			String MinDate = "01/01/2004";
 			try {
 				
 				// after reading the csv file, we will use CSVParser to parse through
@@ -146,15 +154,15 @@ public class MyAppCollector {
 						String BDate = FilterDate(record.get(HeaderList[0]),dateFormat);
 						
 						// Check if date after 01/01/2004
-						if (CheckDateRange(BDate,"01/01/2004")) {
+						if (CheckDateRange(BDate,MinDate)) {
 							String BName = record.get(HeaderList[1]);
 							String BStreet = record.get(HeaderList[2]);
 							String BCity = record.get(HeaderList[3]);
 							// TODO GeoLocation Need to convert to geoLocation object for elasticSearch
-							String BGeoLocation = record.get(HeaderList[5]);
+							String BGeoLocation = correctGeoPointsBusiness(record.get(HeaderList[5]));
 							
 							// Add zip code if exists
-							String BZipCode = record.get(HeaderList[4]);
+							String BZipCode = record.get(HeaderList[4]).length() >= 5 ? record.get(HeaderList[4]).substring(0, 5) : record.get(HeaderList[4]);
 							
 							Business business = new Business(BName, BStreet, BCity, BZipCode, BGeoLocation, BDate);
 							
@@ -180,10 +188,11 @@ public class MyAppCollector {
 		}
 		
 		// Code taken from ElasticSearchExample used for reading big csv files
-		public Map<String,Business> mungeeProperty(String[] HeaderList, File csv) {
+		public Map<String,Property> mungeeProperty(String[] HeaderList, File csv) {
 
-			Map<String,Business> businesses = new HashMap<String,Business>();
-			String dateFormat = "mm/dd/yyyy";
+			Map<String,Property> properties = new HashMap<String,Property>();
+			String dateFormat = "yyyymmdd";
+			String MinDate = "01/01/2004";
 			try {
 				
 				// after reading the csv file, we will use CSVParser to parse through
@@ -191,34 +200,49 @@ public class MyAppCollector {
 				// for each record, we will add to ArrayList of it's object
 				
 				parser.forEach(record -> {
-					// cleaning up dirty data which doesn't have date or zipCode
-					// location
-					if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[4]).isEmpty()) {
-						String BDate = FilterDate(record.get(HeaderList[0]),dateFormat);
-						String BName = record.get(HeaderList[1]);
-						String BStreet = record.get(HeaderList[2]);
-						String BCity = record.get(HeaderList[3]);
-						// TODO GeoLocation Need to convert to geoLocation object for elasticSearch
-						String BGeoLocation = record.get(HeaderList[5]);
+					String PropertyType = record.get(HeaderList[1]);
+					
+					// Check if property is commercial type
+					if (PropertyType.equals("Commercial")) {
 						
-						// Add zip code if exists and if not get it from station identifier
-						String BZipCode = record.get(HeaderList[4]);
-						
-						Business business = new Business(BName, BStreet, BCity, BZipCode, BGeoLocation, BDate);
-						
-						if (!businesses.containsKey(BDate)) {
-							businesses.put(BDate, business);
-							System.out.println(business.getStartdate()+" | "+business.getBName()+" | "+business.getAddress()+" | "+business.getGeoLocation()+" | "+business.getCity()+" | "+business.getZipCode());
-						}else{
-							if (!businesses.get(BDate).equals(business)) {
-								businesses.put(BDate, business);
-								System.out.println(business.getStartdate()+" | "+business.getBName()+" | "+business.getAddress()+" | "+business.getGeoLocation()+" | "+business.getCity()+" | "+business.getZipCode());
+						// Cleaning up dirty data which doesn't have date or zipCode
+						if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[5]).isEmpty()) {
+							String PDate = FilterDate(record.get(HeaderList[0]),dateFormat);
+							
+							// Check if date is after 01/01/2004
+							if (CheckDateRange(PDate,MinDate)) {
+								String PUnitsNo = record.get(HeaderList[4]);
+								
+								// Check if unit counts are more than 0
+								if (Integer.parseInt(PUnitsNo) > 0) {
+									String PStreet = record.get(HeaderList[2]);
+									String PCity = record.get(HeaderList[3]);
+									// TODO GeoLocation Need to be tested when inserted into elasticSearch
+									String PGeoLocation = correctGeoPointsCrime(record.get(HeaderList[6]),record.get(HeaderList[7]));
+									
+									// Add zip code if exists and if not get it from station identifier
+									String PZipCode = record.get(HeaderList[5]);
+									
+									Property property = new Property(PDate, PStreet, PCity, PZipCode, PUnitsNo,PGeoLocation);
+									
+									if (!properties.containsKey(PDate)) {
+										properties.put(PDate, property);
+										System.out.println(property.getRecordingDate()+" | "+property.getUnitNo()+" | "+property.getStreetName()+" | "+property.getGeoLocation()+" | "+property.getCityName()+" | "+property.getZipCode());
+									}else{
+										if (!properties.get(PDate).equals(property)) {
+											properties.put(PDate, property);
+											System.out.println(property.getRecordingDate()+" | "+property.getUnitNo()+" | "+property.getStreetName()+" | "+property.getGeoLocation()+" | "+property.getCityName()+" | "+property.getZipCode());
+										}
+									}
+								}
 								
 							}
+							
 						}
-					}				
+					}
+									
 				});
-				return businesses;
+				return properties;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -276,8 +300,39 @@ public class MyAppCollector {
 		}
 		return false;
 	}
+	
+	// Get correct format of GeoLocation
+	 public static String correctGeoPointsBusiness(String GeoPoint){
+			if (!GeoPoint.isEmpty()) {
+				String newPoints = GeoPoint.substring(1,GeoPoint.length()-1);
+				String[] temp = newPoints.split(" ");
+				String finalString = String.format("%.2f", Double.parseDouble(temp[0].substring(0, temp[0].length()-1))) + "," + String.format("%.2f", Double.parseDouble(temp[1]));
+				return finalString;
+			}else{
+				return GeoPoint;
+			}
+		}
 
-	public void save(ArrayList<String> HeaderList, ArrayList<Object> MungedData, String fileName) {
+	 public static String correctGeoPointsCrime(String lat, String log){
+		 String newlat, newlog;
+			if (lat.isEmpty()) {
+				newlat = "";
+			}else{
+				newlat = String.format("%.2f", Double.parseDouble(lat));
+			}
+			if (log.isEmpty()) {
+				newlog = "";
+			}else{
+				newlog = String.format("%.2f", Double.parseDouble(log));
+			}
+			if (lat.isEmpty() && log.isEmpty()) {
+				return "";
+			} else {
+				return newlat+","+newlog;
+			}
+	 }
+	 
+	public void save(String[] HeaderList) {
 	}
 
 }

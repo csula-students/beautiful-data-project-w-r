@@ -43,7 +43,7 @@ public class ElasticSearchExampleApp {
 
     public static void main(String[] args) throws URISyntaxException, IOException {
         Node node = nodeBuilder().settings(Settings.builder()
-            .put("cluster.name", "wael")
+            .put("cluster.name", "CS594team")
             .put("path.home", "elasticsearch-data")).node();
         Client client = node.client();
 

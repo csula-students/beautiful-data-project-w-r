@@ -6,7 +6,7 @@ public class Crime {
 	private String Description;
 	private String Street;
 	private String City;
-	private String GeoLocation;
+	private String location;
 	private String ZipCode;
 	
 	public Crime(String cDate, String description, String street, String city, String geoLocation, String zipCode) {
@@ -14,7 +14,7 @@ public class Crime {
 		this.Description = description;
 		this.Street = street;
 		this.City = city;
-		this.GeoLocation = geoLocation;
+		this.location = geoLocation;
 		this.ZipCode = zipCode;
 	}
 
@@ -51,11 +51,11 @@ public class Crime {
 	}
 
 	public String getGeoLocation() {
-		return GeoLocation;
+		return location;
 	}
 
 	public void setGeoLocation(String geoLocation) {
-		GeoLocation = geoLocation;
+		location = geoLocation;
 	}
 
 	public String getZipCode() {

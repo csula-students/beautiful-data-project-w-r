@@ -6,7 +6,7 @@ public class Business {
 	private String Address;
 	private String City;
 	private String zipCode;
-	private String GeoLocation;
+	private String location;
 	private String Startdate;
 	
 	
@@ -15,7 +15,7 @@ public class Business {
 		this.Address = address;
 		this.City = city;
 		this.zipCode = zipCode;
-		this.GeoLocation = geoLocation;
+		this.location = geoLocation;
 		this.Startdate = startdate;
 	}
 	
@@ -44,10 +44,10 @@ public class Business {
 		this.zipCode = zipCode;
 	}
 	public String getGeoLocation() {
-		return GeoLocation;
+		return location;
 	}
 	public void setGeoLocation(String geoLocation) {
-		GeoLocation = geoLocation;
+		location = geoLocation;
 	}
 	public String getStartdate() {
 		return Startdate;
