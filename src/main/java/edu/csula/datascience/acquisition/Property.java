@@ -2,21 +2,38 @@ package edu.csula.datascience.acquisition;
 
 public class Property {
 
+	private String RecordingDate;
+	private String StreetName;
 	private String CityName;
 	private String ZipCode;
-	private String HouseNo;
-	private String StreetName;
-	private String EffectiveDate;
+	private String UnitNo;
 	private String GeoLocation;
 	
-	public Property(String cityName, String zipCode, String houseNo, String streetName, String effectiveDate,
+	public Property(String recordingDate, String streetName, String cityName, String zipCode, String unitNo,
 			String geoLocation) {
+		
+		this.RecordingDate = recordingDate;
+		this.StreetName = streetName;
 		this.CityName = cityName;
 		this.ZipCode = zipCode;
-		this.HouseNo = houseNo;
-		this.StreetName = streetName;
-		this.EffectiveDate = effectiveDate;
+		this.UnitNo = unitNo;
 		this.GeoLocation = geoLocation;
+	}
+
+	public String getRecordingDate() {
+		return RecordingDate;
+	}
+
+	public void setRecordingDate(String recordingDate) {
+		RecordingDate = recordingDate;
+	}
+
+	public String getStreetName() {
+		return StreetName;
+	}
+
+	public void setStreetName(String streetName) {
+		StreetName = streetName;
 	}
 
 	public String getCityName() {
@@ -35,28 +52,12 @@ public class Property {
 		ZipCode = zipCode;
 	}
 
-	public String getHouseNo() {
-		return HouseNo;
+	public String getUnitNo() {
+		return UnitNo;
 	}
 
-	public void setHouseNo(String houseNo) {
-		HouseNo = houseNo;
-	}
-
-	public String getStreetName() {
-		return StreetName;
-	}
-
-	public void setStreetName(String streetName) {
-		StreetName = streetName;
-	}
-
-	public String getEffectiveDate() {
-		return EffectiveDate;
-	}
-
-	public void setEffectiveDate(String effectiveDate) {
-		EffectiveDate = effectiveDate;
+	public void setUnitNo(String unitNo) {
+		UnitNo = unitNo;
 	}
 
 	public String getGeoLocation() {
@@ -66,8 +67,6 @@ public class Property {
 	public void setGeoLocation(String geoLocation) {
 		GeoLocation = geoLocation;
 	}
-	
-	
-	
+		
 	
 }
