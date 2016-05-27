@@ -43,6 +43,10 @@ public class MyAppCollectorApp {
         //Map<String,Crime> crimes04 = collector.mungeeCrime04(Crime04HeaderList,Crime04);
         //System.out.println(crimes04.size());
         
+        // FINALL AND READY FOR USE
+        //Map<String,Business> businesses = collector.mungeeBusiness(BusinessHeaderList,Business);
+        //System.out.println(businesses.size());
+        
        // ArrayList<Crime> crimes04 = collector.readCSV(Crime04HeaderList,Crime04);
        // System.out.println(crimes04.size());
         //System.out.println(crimes04.get(0).getCDate()+" | "+crimes04.get(0).getCity()+" | "+crimes04.get(0).getDescription()+" | "+crimes04.get(0).getGeoLocation()+" | "+crimes04.get(0).getStreet()+" | "+crimes04.get(0).getZipCode());

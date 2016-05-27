@@ -144,6 +144,57 @@ public class MyAppCollector {
 					// location
 					if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[4]).isEmpty()) {
 						String BDate = FilterDate(record.get(HeaderList[0]),dateFormat);
+						
+						// Check if date after 01/01/2004
+						if (CheckDateRange(BDate,"01/01/2004")) {
+							String BName = record.get(HeaderList[1]);
+							String BStreet = record.get(HeaderList[2]);
+							String BCity = record.get(HeaderList[3]);
+							// TODO GeoLocation Need to convert to geoLocation object for elasticSearch
+							String BGeoLocation = record.get(HeaderList[5]);
+							
+							// Add zip code if exists
+							String BZipCode = record.get(HeaderList[4]);
+							
+							Business business = new Business(BName, BStreet, BCity, BZipCode, BGeoLocation, BDate);
+							
+							if (!businesses.containsKey(BDate)) {
+								businesses.put(BDate, business);
+								System.out.println(business.getStartdate()+" | "+business.getBName()+" | "+business.getAddress()+" | "+business.getGeoLocation()+" | "+business.getCity()+" | "+business.getZipCode());
+							}else{
+								if (!businesses.get(BDate).equals(business)) {
+									businesses.put(BDate, business);
+									System.out.println(business.getStartdate()+" | "+business.getBName()+" | "+business.getAddress()+" | "+business.getGeoLocation()+" | "+business.getCity()+" | "+business.getZipCode());
+									
+								}
+							}
+						}
+						
+					}				
+				});
+				return businesses;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		// Code taken from ElasticSearchExample used for reading big csv files
+		public Map<String,Business> mungeeProperty(String[] HeaderList, File csv) {
+
+			Map<String,Business> businesses = new HashMap<String,Business>();
+			String dateFormat = "mm/dd/yyyy";
+			try {
+				
+				// after reading the csv file, we will use CSVParser to parse through
+				CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
+				// for each record, we will add to ArrayList of it's object
+				
+				parser.forEach(record -> {
+					// cleaning up dirty data which doesn't have date or zipCode
+					// location
+					if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[4]).isEmpty()) {
+						String BDate = FilterDate(record.get(HeaderList[0]),dateFormat);
 						String BName = record.get(HeaderList[1]);
 						String BStreet = record.get(HeaderList[2]);
 						String BCity = record.get(HeaderList[3]);
