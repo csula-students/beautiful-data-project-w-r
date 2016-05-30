@@ -2,6 +2,7 @@ package edu.csula.datascience.acquisition;
 
 public class Property {
 
+	private String PID;
 	private String RecordingDate;
 	private String StreetName;
 	private String CityName;
@@ -9,9 +10,9 @@ public class Property {
 	private String UnitNo;
 	private String location;
 	
-	public Property(String recordingDate, String streetName, String cityName, String zipCode, String unitNo,
+	public Property(String PID, String recordingDate, String streetName, String cityName, String zipCode, String unitNo,
 			String geoLocation) {
-		
+		this.setPID(PID);
 		this.RecordingDate = recordingDate;
 		this.StreetName = streetName;
 		this.CityName = cityName;
@@ -66,6 +67,14 @@ public class Property {
 
 	public void setGeoLocation(String geoLocation) {
 		location = geoLocation;
+	}
+
+	public String getPID() {
+		return PID;
+	}
+
+	public void setPID(String pID) {
+		PID = pID;
 	}
 		
 	

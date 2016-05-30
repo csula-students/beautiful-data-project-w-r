@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.elasticsearch.action.bulk.BackoffPolicy;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -27,13 +28,15 @@ import com.google.gson.Gson;
 
 public class MyAppCollectorApp {
 
-	private final static String indexName = "bd-data";
-	private final static String typeName = "Crimes";
+	private final static String indexName = "bd-business";
+	private final static String CrimeTypeName = "Crimes";
+	private final static String PropertyTypeName = "Properties";
+	private final static String BusinessTypeName = "Businesses";
 
 	public static void main(String[] args) throws URISyntaxException {
 
 		Node node = nodeBuilder()
-				.settings(Settings.builder().put("cluster.name", "CS594team").put("path.home", "elasticsearch-data"))
+				.settings(Settings.builder().put("cluster.name", "CS594").put("path.home", "elasticsearch-data"))
 				.node();
 		Client client = node.client();
 
@@ -71,26 +74,29 @@ public class MyAppCollectorApp {
 		System.out.println("CHECKING FILE: " + Property.getName());
 
 		// FINALL AND READY FOR USE
-		 Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,typeName);
-		 System.out.println(crimes15.size());
+		// Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName);
+		 /*for (String id : crimes15.keySet()) {
+			 System.out.println("CRIME ID: "+crimes15.get(id).getCID());
+		}*/
+		 
+		// FINALL AND READY FOR USE
+		 //Map<String,Crime> crimes2004 = collector.mungeeCrime15(Crime04,Crime04HeaderList,bulkProcessor,indexName,CrimeTypeName);
+		 /*for (String id : crimes2004.keySet()) {
+			 System.out.println("CRIME ID: "+crimes2004.get(id).getCID());
+		}*/
 
 		// FINALL AND READY FOR USE
-		// Map<String,Crime> crimes04 =
-		// collector.mungeeCrime04(Crime04HeaderList,Crime04);
-		// System.out.println(crimes04.size());
+		 //Map<String,Business> businesses = collector.mungeeBusiness(Business,BusinessHeaderList,bulkProcessor,indexName,BusinessTypeName);
+		 /*for (String id : businesses.keySet()) {
+			 System.out.println("Business ID: "+businesses.get(id).getCID());
+		}*/
 
-		// FINALL AND READY FOR USE
-		// Map<String,Business> businesses =
-		// collector.mungeeBusiness(BusinessHeaderList,Business);
-		// System.out.println(businesses.size());
+		// FINALL AND READY FOR USE		 
+		 //Map<String,Property> properties = collector.mungeeProperty(Property,PropertyHeaderList,bulkProcessor,indexName,PropertyTypeName);
+		 /*for (String id : properties.keySet()) {
+			 System.out.println("Property ID: "+properties.get(id).getCID());
+		}*/
 
-		// FINALL AND READY FOR USE
-		// Map<String,Property> properties =
-		// collector.mungeeProperty(PropertyHeaderList, Property);
-		// System.out.println(properties.size());
-
-		// TODO MAPS SHOULD BE of TYPE Map<String,ArrayList<Crime>>,
-		// Map<String,ArrayList<Business>> and Map<String,ArrayList<Property>>
 		// TODO ADD A FIELD CALLED "TYPE" TO THE DATA CLASSES
 		// TODO STORE FILTERED RESULTS IN ELASTICSEARCH "IMPLEMENT ELASTICSEARCH"
 		// TODO SHOW VISUALIZATION
@@ -102,7 +108,7 @@ public class MyAppCollectorApp {
 		// collector.save(cleanedTweets);
 	}
 
-	public static void aggregation(Node node) {
+	public static void aggregation(Node node,String indexName,String typeName) {
 		SearchResponse sr = node.client().prepareSearch(indexName)
 		            .setTypes(typeName)
 		            .setQuery(QueryBuilders.matchAllQuery())
@@ -142,24 +148,24 @@ public class MyAppCollectorApp {
 
 	public static String[] buildCrime15Header() {
 		String[] header = { "﻿CRIME_DATE", "STATION_IDENTIFIER", "CRIME_CATEGORY_DESCRIPTION", "STREET", "CITY",
-				"LATITUDE", "LONGITUDE" };
+				"LATITUDE", "LONGITUDE","CRIME_IDENTIFIER" };
 		return header;
 	}
 
 	public static String[] buildCrime04Header() {
 		String[] header = { "﻿CRIME_DATE", "STATION_IDENTIFIER", "CRIME_CATEGORY_DESCRIPTION", "STREET", "CITY",
-				"LATITUDE", "LONGITUDE", "ZIP" };
+				"LATITUDE", "LONGITUDE", "ZIP","CRIME_IDENTIFIER" };
 		return header;
 	}
 
 	public static String[] buildBusinessHeader() {
-		String[] header = { "LOCATION START DATE", "BUSINESS NAME", "STREET ADDRESS", "CITY", "ZIP CODE", "LOCATION" };
+		String[] header = { "LOCATION START DATE", "BUSINESS NAME", "STREET ADDRESS", "CITY", "ZIP CODE", "LOCATION","LOCATION ACCOUNT #" };
 		return header;
 	}
 
 	public static String[] buildPropertyHeader() {
 		String[] header = { "RecordingDate", "GeneralUseType", "StreetName", "City", "Units", "ZIPcode5", "CENTER_LAT",
-				"CENTER_LON" };
+				"CENTER_LON" , "AssessorID"};
 		return header;
 	}
 

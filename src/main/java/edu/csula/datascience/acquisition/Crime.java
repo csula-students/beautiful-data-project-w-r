@@ -2,6 +2,7 @@ package edu.csula.datascience.acquisition;
 
 public class Crime {
 	
+	private String CID;
 	private String CDate;
 	private String Description;
 	private String Street;
@@ -9,7 +10,8 @@ public class Crime {
 	private String location;
 	private String ZipCode;
 	
-	public Crime(String cDate, String description, String street, String city, String geoLocation, String zipCode) {
+	public Crime(String CID,String cDate, String description, String street, String city, String geoLocation, String zipCode) {
+		this.setCID(CID);
 		this.CDate = cDate;
 		this.Description = description;
 		this.Street = street;
@@ -64,6 +66,14 @@ public class Crime {
 
 	public void setZipCode(String zipCode) {
 		ZipCode = zipCode;
+	}
+
+	public String getCID() {
+		return CID;
+	}
+
+	public void setCID(String cID) {
+		CID = cID;
 	}
 	
 	

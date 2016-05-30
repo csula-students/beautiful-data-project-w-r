@@ -2,6 +2,7 @@ package edu.csula.datascience.acquisition;
 
 public class Business {
 
+	private String BID;
 	private String BName;
 	private String Address;
 	private String City;
@@ -10,7 +11,8 @@ public class Business {
 	private String Startdate;
 	
 	
-	public Business(String bName, String address, String city, String zipCode, String geoLocation, String startdate) {
+	public Business(String bid ,String bName, String address, String city, String zipCode, String geoLocation, String startdate) {
+		this.setBID(bid);
 		this.BName = bName;
 		this.Address = address;
 		this.City = city;
@@ -54,6 +56,14 @@ public class Business {
 	}
 	public void setStartdate(String startdate) {
 		Startdate = startdate;
+	}
+
+	public String getBID() {
+		return BID;
+	}
+
+	public void setBID(String bID) {
+		BID = bID;
 	}
 	
 }
