@@ -4,10 +4,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.elasticsearch.action.bulk.BackoffPolicy;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -23,8 +20,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-
-import com.google.gson.Gson;
 
 public class MyAppCollectorApp {
 
@@ -73,7 +68,7 @@ public class MyAppCollectorApp {
 		System.out.println("CHECKING FILE: " + Property.getName());
 
 		// FINALL AND READY FOR USE
-		// Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName15);
+		 Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName15);
 		 /*for (String id : crimes15.keySet()) {
 			 System.out.println("CRIME ID: "+crimes15.get(id).getCID());
 		}*/

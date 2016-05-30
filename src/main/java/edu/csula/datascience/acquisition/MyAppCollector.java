@@ -45,7 +45,7 @@ public class MyAppCollector {
 					String CDescription = record.get(HeaderList[2]);
 					String CStreet = record.get(HeaderList[3]);
 					String CCity = record.get(HeaderList[4]);
-					String CID = record.get(HeaderList[7]);
+					String CID = record.get(HeaderList[8]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[8]);
 
 					// TODO GeoLocation Need to testing after inserting into
 					// elasticSearch
@@ -66,6 +66,7 @@ public class MyAppCollector {
 						System.out.println("DELETED FOR MISSING INFO");
 
 					} else {
+						
 						if (!crimes.containsKey(CID)) {
 							crimes.put(CID, crime);
 							System.out.println("DATA ADDED TO HAShMAP");
@@ -75,7 +76,8 @@ public class MyAppCollector {
 							
 
 						} else {
-							System.out.println("DUBLICATE INFO");
+							
+							System.out.println("DUBLICATE INFO current CID: "+CID+" Stored crime ID: "+crimes.get(CID).getCID());
 						}
 					}
 				}
@@ -120,7 +122,7 @@ public class MyAppCollector {
 					String CDescription = record.get(HeaderList[2]);
 					String CStreet = record.get(HeaderList[3]);
 					String CCity = record.get(HeaderList[4]);
-					String CID = record.get(HeaderList[7]);
+					String CID = record.get(HeaderList[7]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[7]);
 
 					// TODO GeoLocation Need to convert to geoLocation object
 					// for elasticSearch
@@ -143,7 +145,7 @@ public class MyAppCollector {
 							System.out.println("DATA ADDED TO ElasticSearch");
 
 						} else {
-							System.out.println("DUBLICATE INFO");
+							System.out.println("DUBLICATE INFO current CID: "+CID+" Stored crime ID: "+crimes.get(CID).getCID());
 						}
 					}
 
@@ -190,7 +192,7 @@ public class MyAppCollector {
 						String BName = record.get(HeaderList[1]);
 						String BStreet = record.get(HeaderList[2]);
 						String BCity = record.get(HeaderList[3]);
-						String BID = record.get(HeaderList[6]);
+						String BID = record.get(HeaderList[6]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[6]);
 						// TODO GeoLocation Need to convert to geoLocation
 						// object for elasticSearch
 						String BGeoLocation = correctGeoPointsBusiness(record.get(HeaderList[5]));
@@ -214,7 +216,7 @@ public class MyAppCollector {
 								System.out.println("DATA ADDED TO ElasticSearch");
 
 							} else {
-								System.out.println("DUBLICATE INFO");
+								System.out.println("DUBLICATE INFO current BID: "+BID+" Stored Business ID: "+businesses.get(BID).getBID());
 							}
 						}
 					}
@@ -264,8 +266,7 @@ public class MyAppCollector {
 								// inserted into elasticSearch
 								String PGeoLocation = correctGeoPointsCrime(record.get(HeaderList[6]),
 										record.get(HeaderList[7]));
-								String PID = record.get(HeaderList[8]);
-
+								String PID = record.get(HeaderList[8]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[8]);
 								// Add zip code if exists and if not get it from
 								// station identifier
 								String PZipCode = record.get(HeaderList[5]);
@@ -286,7 +287,7 @@ public class MyAppCollector {
 										System.out.println("DATA ADDED TO ElasticSearch");
 
 									} else {
-										System.out.println("DUBLICATE INFO");
+										System.out.println("DUBLICATE INFO current PID: "+PID+" Stored Properties ID: "+properties.get(PID).getPID());
 									}
 								}
 							}
