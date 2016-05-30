@@ -29,7 +29,8 @@ import com.google.gson.Gson;
 public class MyAppCollectorApp {
 
 	private final static String indexName = "bd-business";
-	private final static String CrimeTypeName = "Crimes";
+	private final static String CrimeTypeName15 = "Crimes15";
+	private final static String CrimeTypeName04 = "Crimes04";
 	private final static String PropertyTypeName = "Properties";
 	private final static String BusinessTypeName = "Businesses";
 
@@ -41,9 +42,7 @@ public class MyAppCollectorApp {
 		Client client = node.client();
 
 		// create bulk processor
-		BulkProcessor bulkProcessor = createBulkProcessor(client);
-
-		
+		BulkProcessor bulkProcessor = createBulkProcessor(client);		
 
 		MyAppSource source = new MyAppSource();
 		MyAppCollector collector = new MyAppCollector();
@@ -74,13 +73,13 @@ public class MyAppCollectorApp {
 		System.out.println("CHECKING FILE: " + Property.getName());
 
 		// FINALL AND READY FOR USE
-		// Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName);
+		// Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName15);
 		 /*for (String id : crimes15.keySet()) {
 			 System.out.println("CRIME ID: "+crimes15.get(id).getCID());
 		}*/
 		 
 		// FINALL AND READY FOR USE
-		 //Map<String,Crime> crimes2004 = collector.mungeeCrime15(Crime04,Crime04HeaderList,bulkProcessor,indexName,CrimeTypeName);
+		// Map<String,Crime> crimes2004 = collector.mungeeCrime04(Crime04,Crime04HeaderList,bulkProcessor,indexName,CrimeTypeName04);
 		 /*for (String id : crimes2004.keySet()) {
 			 System.out.println("CRIME ID: "+crimes2004.get(id).getCID());
 		}*/
@@ -97,15 +96,13 @@ public class MyAppCollectorApp {
 			 System.out.println("Property ID: "+properties.get(id).getCID());
 		}*/
 
-		// TODO ADD A FIELD CALLED "TYPE" TO THE DATA CLASSES
-		// TODO STORE FILTERED RESULTS IN ELASTICSEARCH "IMPLEMENT ELASTICSEARCH"
 		// TODO SHOW VISUALIZATION
 		 
 		 // Aggregation
 		 //aggregation(node);
 
 		// Not implemented
-		// collector.save(cleanedTweets);
+		// collector.save(Map<String,Property> props);
 	}
 
 	public static void aggregation(Node node,String indexName,String typeName) {
