@@ -18,15 +18,24 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.elasticsearch.action.bulk.BulkProcessor;
+import org.elasticsearch.action.index.IndexRequest;
 
 import com.google.gson.Gson;
 
 public class MyAppCollector {
 
-	// Gson library for sending json to elastic search
+	// Gson library for converting object to JSON format
 	Gson gson = new Gson();
+			
 	boolean HeaderFlag = false;
 	String filePath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
+	String[] PropertyHeaderList = { "PROPERTY_ID", "PROPERTY_DATE", "ZIP_CODE", "UNITS_NO", "STREET", "CITY",
+	"GEO_LOCATION" };
+	String[] BusinessHeaderList = { "BUSINESS_ID", "BUSINESS_DATE", "BUSINESS_NAME", "BUSINESS_ADDRESS", "CITY", "ZIP_CODE",
+	"GEO_LOCATION" };
+	String[] CrimeHeaderList = { "CRIME_ID", "CRIME_DATE", "ZIP_CODE", "CRIME_DESCRIPTION", "STREET", "CITY",
+	"GEO_LOCATION" };
 
 	// Code taken from ElasticSearchExample used for reading big csv files
 	public void mungeeCrime04(File csv, String[] HeaderList, String fileName) {
@@ -306,6 +315,242 @@ public class MyAppCollector {
 			e.printStackTrace();
 		}
 	}
+	
+	public void saveCrime(Crime Crime, String fileName, boolean headerFlag) {
+		// Delimiter used in CSV file
+		String NEW_LINE_SEPARATOR = "\n";
+
+		FileWriter fileWriter = null;
+
+		CSVPrinter csvFilePrinter = null;
+
+		// Create the CSVFormat object with "\n" as a record delimiter
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+
+		try {
+			// initialize FileWriter object
+			fileWriter = new FileWriter(fileName, true);
+
+			// initialize CSVPrinter object
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+			if (!headerFlag) {
+				// Create CSV file header
+				csvFilePrinter.printRecord(CrimeHeaderList);
+			}
+
+			// Write a new object list to the CSV file
+			List DataRecord = new ArrayList();
+			DataRecord.add(Crime.getCID());
+			DataRecord.add(Crime.getCDate());
+			DataRecord.add(Crime.getZipCode());
+			DataRecord.add(Crime.getDescription());
+			DataRecord.add(Crime.getStreet());
+			DataRecord.add(Crime.getCity());
+			DataRecord.add(Crime.getGeoLocation());
+			csvFilePrinter.printRecord(DataRecord);
+		} catch (Exception e) {
+			System.out.println("Error in CsvFileWriter !!!");
+			e.printStackTrace();
+		} finally {
+			try {
+				fileWriter.flush();
+				fileWriter.close();
+				csvFilePrinter.close();
+			} catch (IOException e) {
+				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public void saveBusiness(Business Business, String fileName, boolean headerFlag) {
+		// Delimiter used in CSV file
+		String NEW_LINE_SEPARATOR = "\n";		
+
+		FileWriter fileWriter = null;
+
+		CSVPrinter csvFilePrinter = null;
+
+		// Create the CSVFormat object with "\n" as a record delimiter
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+
+		try {
+			// initialize FileWriter object
+			fileWriter = new FileWriter(fileName, true);
+
+			// initialize CSVPrinter object
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+			if (!headerFlag) {
+				// Create CSV file header
+				csvFilePrinter.printRecord(BusinessHeaderList);
+			}
+			// Write a new object list to the CSV file
+			List DataRecord = new ArrayList();
+			DataRecord.add(Business.getBID());
+			DataRecord.add(Business.getStartdate());
+			DataRecord.add(Business.getBName());
+			DataRecord.add(Business.getAddress());
+			DataRecord.add(Business.getCity());
+			DataRecord.add(Business.getZipCode());
+			DataRecord.add(Business.getGeoLocation());
+			csvFilePrinter.printRecord(DataRecord);
+
+		} catch (Exception e) {
+			System.out.println("Error in CsvFileWriter !!!");
+			e.printStackTrace();
+		} finally {
+			try {
+				fileWriter.flush();
+				fileWriter.close();
+				csvFilePrinter.close();
+			} catch (IOException e) {
+				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public void saveProperty(Property Property, String fileName, boolean headerFlag) {
+		// Delimiter used in CSV file
+		String NEW_LINE_SEPARATOR = "\n";
+
+		FileWriter fileWriter = null;
+
+		CSVPrinter csvFilePrinter = null;
+
+		// Create the CSVFormat object with "\n" as a record delimiter
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+
+		try {
+			// initialize FileWriter object
+			fileWriter = new FileWriter(fileName, true);
+
+			// initialize CSVPrinter object
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+			if (!headerFlag) {
+				// Create CSV file header
+				csvFilePrinter.printRecord(PropertyHeaderList);
+			}
+
+			// Write a new object list to the CSV file
+			List DataRecord = new ArrayList();
+			DataRecord.add(Property.getPID());
+			DataRecord.add(Property.getRecordingDate());
+			DataRecord.add(Property.getZipCode());
+			DataRecord.add(Property.getUnitNo());
+			DataRecord.add(Property.getStreetName());
+			DataRecord.add(Property.getCityName());
+			DataRecord.add(Property.getGeoLocation());
+			csvFilePrinter.printRecord(DataRecord);
+
+		} catch (Exception e) {
+			System.out.println("Error in CsvFileWriter !!!");
+			e.printStackTrace();
+		} finally {
+			try {
+				fileWriter.flush();
+				fileWriter.close();
+				csvFilePrinter.close();
+			} catch (IOException e) {
+				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	public void CombineCrimeFiles(File FromCSV, File ToCSV) {
+		
+		try {
+			CSVParser parser = CSVParser.parse(FromCSV, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
+
+			parser.forEach(record -> {	
+				Crime crime = new Crime(record.get(CrimeHeaderList[0]), record.get(CrimeHeaderList[1]),
+						record.get(CrimeHeaderList[3]), record.get(CrimeHeaderList[4]), record.get(CrimeHeaderList[5]),
+						record.get(CrimeHeaderList[6]), record.get(CrimeHeaderList[2]));
+				saveCrime(crime,ToCSV.getAbsolutePath(),true);
+			});
+			parser.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void Crime_ToElasticSearch(File csv, BulkProcessor bulkProcessor, String index, String type) {
+
+		try {
+
+			CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
+
+			parser.forEach(record -> {
+				
+				Crime crime = new Crime(record.get(CrimeHeaderList[0]), record.get(CrimeHeaderList[1]),
+						record.get(CrimeHeaderList[3]), record.get(CrimeHeaderList[4]), record.get(CrimeHeaderList[5]),
+						record.get(CrimeHeaderList[6]), record.get(CrimeHeaderList[2]));
+				
+				bulkProcessor.add(new IndexRequest(index, type).source(gson.toJson(crime)));
+				
+				System.out.println("Adding to elasticsearch record # " + record.getRecordNumber());
+			});
+			parser.close();
+			System.out.println("Done uploading to elasticsearch!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void Business_ToElasticSearch(File csv, BulkProcessor bulkProcessor, String index, String type) {
+
+		try {
+
+			CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
+
+			parser.forEach(record -> {
+				
+				Business business = new Business(record.get(BusinessHeaderList[0]), record.get(BusinessHeaderList[2]),
+						record.get(BusinessHeaderList[3]), record.get(BusinessHeaderList[4]),
+						record.get(BusinessHeaderList[5]), record.get(BusinessHeaderList[6]),
+						record.get(BusinessHeaderList[1]));
+
+				bulkProcessor.add(new IndexRequest(index, type).source(gson.toJson(business)));
+				
+				System.out.println("Adding to elasticsearch record # " + record.getRecordNumber());
+			});
+			parser.close();
+			System.out.println("Done uploading to elasticsearch!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void Property_ToElasticSearch(File csv, BulkProcessor bulkProcessor, String index, String type) {
+
+		try {
+
+			CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
+
+			parser.forEach(record -> {
+				
+				Property Property = new Property(record.get(PropertyHeaderList[0]), record.get(PropertyHeaderList[1]),
+						record.get(PropertyHeaderList[4]), record.get(PropertyHeaderList[5]),
+						record.get(PropertyHeaderList[2]), record.get(PropertyHeaderList[3]),
+						record.get(PropertyHeaderList[6]));
+
+				bulkProcessor.add(new IndexRequest(index, type).source(gson.toJson(Property)));
+				
+				System.out.println("Adding to elasticsearch record # " + record.getRecordNumber());
+			});
+			parser.close();
+			System.out.println("Done uploading to elasticsearch!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// Extract zipcode from Crime file
 	public static String FilterZipCode(String zipCode) {
@@ -367,25 +612,26 @@ public class MyAppCollector {
 		if (!GeoPoint.isEmpty()) {
 			String newPoints = GeoPoint.substring(1, GeoPoint.length() - 1);
 			String[] temp = newPoints.split(" ");
-			String finalString = String.format("%.2f", Double.parseDouble(temp[0].substring(0, temp[0].length() - 1)))
-					+ "," + String.format("%.2f", Double.parseDouble(temp[1]));
+			String finalString = String.format("%f", Double.parseDouble(temp[0].substring(0, temp[0].length() - 1)))
+					+ "," + String.format("%f", Double.parseDouble(temp[1]));
 			return finalString;
 		} else {
 			return "";
 		}
 	}
-
+	
+	// Get correct format of GeoLocation
 	public static String correctGeoPointsCrime(String lat, String log) {
 		String newlat, newlog;
 		if (lat.isEmpty()) {
 			newlat = "";
 		} else {
-			newlat = String.format("%.2f", Double.parseDouble(lat));
+			newlat = String.format("%f", Double.parseDouble(lat));
 		}
 		if (log.isEmpty()) {
 			newlog = "";
 		} else {
-			newlog = String.format("%.2f", Double.parseDouble(log));
+			newlog = String.format("%f", Double.parseDouble(log));
 		}
 		if (lat.isEmpty() && log.isEmpty()) {
 			return "";
@@ -393,162 +639,4 @@ public class MyAppCollector {
 			return newlat + "," + newlog;
 		}
 	}
-
-	public void saveCrime(Crime Crime, String fileName, boolean headerFlag) {
-		// Delimiter used in CSV file
-		String NEW_LINE_SEPARATOR = "\n";
-
-		String[] HeaderList = { "CRIME_ID", "CRIME_DATE", "ZIP_CODE", "CRIME_DESCRIPTION", "STREET", "CITY",
-				"GEO_LOCATION" };
-
-		FileWriter fileWriter = null;
-
-		CSVPrinter csvFilePrinter = null;
-
-		// Create the CSVFormat object with "\n" as a record delimiter
-		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-
-		try {
-			// initialize FileWriter object
-			fileWriter = new FileWriter(fileName, true);
-
-			// initialize CSVPrinter object
-			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-
-			if (!headerFlag) {
-				// Create CSV file header
-				csvFilePrinter.printRecord(HeaderList);
-			}
-
-			// Write a new object list to the CSV file
-			List DataRecord = new ArrayList();
-			DataRecord.add(Crime.getCID());
-			DataRecord.add(Crime.getCDate());
-			DataRecord.add(Crime.getZipCode());
-			DataRecord.add(Crime.getDescription());
-			DataRecord.add(Crime.getStreet());
-			DataRecord.add(Crime.getCity());
-			DataRecord.add(Crime.getGeoLocation());
-			csvFilePrinter.printRecord(DataRecord);
-		} catch (Exception e) {
-			System.out.println("Error in CsvFileWriter !!!");
-			e.printStackTrace();
-		} finally {
-			try {
-				fileWriter.flush();
-				fileWriter.close();
-				csvFilePrinter.close();
-			} catch (IOException e) {
-				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
-				e.printStackTrace();
-			}
-		}
-
-	}
-
-	public void saveBusiness(Business Business, String fileName, boolean headerFlag) {
-		// Delimiter used in CSV file
-		String NEW_LINE_SEPARATOR = "\n";
-
-		String[] HeaderList = { "BUSINESS_ID", "BUSINESS_DATE", "BUSINESS_NAME", "BUSINESS_ADDRESS", "CITY", "ZIP_CODE",
-				"GEO_LOCATION" };
-
-		FileWriter fileWriter = null;
-
-		CSVPrinter csvFilePrinter = null;
-
-		// Create the CSVFormat object with "\n" as a record delimiter
-		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-
-		try {
-			// initialize FileWriter object
-			fileWriter = new FileWriter(fileName, true);
-
-			// initialize CSVPrinter object
-			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-
-			if (!headerFlag) {
-				// Create CSV file header
-				csvFilePrinter.printRecord(HeaderList);
-			}
-			// Write a new object list to the CSV file
-			List DataRecord = new ArrayList();
-			DataRecord.add(Business.getBID());
-			DataRecord.add(Business.getStartdate());
-			DataRecord.add(Business.getBName());
-			DataRecord.add(Business.getAddress());
-			DataRecord.add(Business.getCity());
-			DataRecord.add(Business.getZipCode());
-			DataRecord.add(Business.getGeoLocation());
-			csvFilePrinter.printRecord(DataRecord);
-
-		} catch (Exception e) {
-			System.out.println("Error in CsvFileWriter !!!");
-			e.printStackTrace();
-		} finally {
-			try {
-				fileWriter.flush();
-				fileWriter.close();
-				csvFilePrinter.close();
-			} catch (IOException e) {
-				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
-				e.printStackTrace();
-			}
-		}
-
-	}
-
-	public void saveProperty(Property Property, String fileName, boolean headerFlag) {
-		// Delimiter used in CSV file
-		String NEW_LINE_SEPARATOR = "\n";
-
-		String[] HeaderList = { "PROPERTY_ID", "PROPERTY_DATE", "ZIP_CODE", "UNITS_NO", "STREET", "CITY",
-				"GEO_LOCATION" };
-
-		FileWriter fileWriter = null;
-
-		CSVPrinter csvFilePrinter = null;
-
-		// Create the CSVFormat object with "\n" as a record delimiter
-		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-
-		try {
-			// initialize FileWriter object
-			fileWriter = new FileWriter(fileName, true);
-
-			// initialize CSVPrinter object
-			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-
-			if (!headerFlag) {
-				// Create CSV file header
-				csvFilePrinter.printRecord(HeaderList);
-			}
-
-			// Write a new object list to the CSV file
-			List DataRecord = new ArrayList();
-			DataRecord.add(Property.getPID());
-			DataRecord.add(Property.getRecordingDate());
-			DataRecord.add(Property.getZipCode());
-			DataRecord.add(Property.getUnitNo());
-			DataRecord.add(Property.getStreetName());
-			DataRecord.add(Property.getCityName());
-			DataRecord.add(Property.getGeoLocation());
-			csvFilePrinter.printRecord(DataRecord);
-
-		} catch (Exception e) {
-			System.out.println("Error in CsvFileWriter !!!");
-			e.printStackTrace();
-		} finally {
-			try {
-				fileWriter.flush();
-				fileWriter.close();
-				csvFilePrinter.close();
-			} catch (IOException e) {
-				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
-				e.printStackTrace();
-			}
-		}
-
-	}
-
 }

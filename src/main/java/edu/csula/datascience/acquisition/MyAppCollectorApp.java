@@ -24,14 +24,13 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 public class MyAppCollectorApp {
 
 	private final static String indexName = "bd-business";
-	private final static String CrimeTypeName15 = "Crimes15";
-	private final static String CrimeTypeName04 = "Crimes04";
+	private final static String CrimeTypeName = "Crimes";
 	private final static String PropertyTypeName = "Properties";
 	private final static String BusinessTypeName = "Businesses";
 	private final static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
 
 	public static void main(String[] args) throws URISyntaxException {
-
+		
 		Node node = nodeBuilder()
 				.settings(Settings.builder().put("cluster.name", "CS594").put("path.home", "elasticsearch-data"))
 				.node();
@@ -74,33 +73,41 @@ public class MyAppCollectorApp {
 
 		if (!FilteredCrimes04.exists()) {
 			collector.mungeeCrime04(Crime04, Crime04HeaderList, "FilteredCrimes04.csv");
-			System.out.println("FINISHED SAVING");
+			System.out.println("FINISHED SAVING FilteredCrimes04.csv");
 		} else {
 			System.out.println("FILE " + FilteredCrimes04.getName() + " EXISTS");
 		}
 
 		if (!FilteredCrimes15.exists()) {
 			collector.mungeeCrime15(Crime15, Crime15HeaderList, "FilteredCrimes15.csv");
-			System.out.println("FINISHED SAVING");
+			System.out.println("FINISHED SAVING FilteredCrimes15.csv");
 		} else {
 			System.out.println("FILE " + FilteredCrimes15.getName() + " EXISTS");
 		}
 
 		if (!FilteredBusiness.exists()) {
 			collector.mungeeBusiness(Business, BusinessHeaderList, "FilteredBusiness.csv");
-			System.out.println("FINISHED SAVING");
+			System.out.println("FINISHED SAVING FilteredBusiness.csv");
 		} else {
 			System.out.println("FILE " + FilteredBusiness.getName() + " EXISTS");
 		}
 
 		if (!FilteredProperty.exists()) {
 			collector.mungeeProperty(Property, PropertyHeaderList, "FilteredProperty.csv");
-			System.out.println("FINISHED SAVING");
+			System.out.println("FINISHED SAVING FilteredProperty.csv");
 		} else {
 			System.out.println("FILE " + FilteredProperty.getName() + " EXISTS");
 		}
+		
+		collector.CombineCrimeFiles(FilteredCrimes15, FilteredCrimes04);
+		System.out.println("Combining complete!");
 
-		// TODO Insert filtered data into elastic search
+		// Using FilteredCrime04 after combining Crime15 with it
+		collector.Crime_ToElasticSearch(FilteredCrimes04,bulkProcessor,indexName,CrimeTypeName);
+		collector.Business_ToElasticSearch(FilteredBusiness,bulkProcessor,indexName,BusinessTypeName);
+		collector.Property_ToElasticSearch(FilteredProperty,bulkProcessor,indexName,PropertyTypeName);
+		
+		System.out.println("Uploading to elasticsearch is done!!");
 		// TODO SHOW VISUALIZATION
 		// TODO Add to AWS
 	}
