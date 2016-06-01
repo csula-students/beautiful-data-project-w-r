@@ -5,7 +5,6 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.Map;
 
 import org.elasticsearch.action.bulk.BackoffPolicy;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -29,7 +28,7 @@ public class MyAppCollectorApp {
 	private final static String CrimeTypeName04 = "Crimes04";
 	private final static String PropertyTypeName = "Properties";
 	private final static String BusinessTypeName = "Businesses";
-	private final static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString()+"\\";
+	private final static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
 
 	public static void main(String[] args) throws URISyntaxException {
 
@@ -39,7 +38,7 @@ public class MyAppCollectorApp {
 		Client client = node.client();
 
 		// create bulk processor
-		BulkProcessor bulkProcessor = createBulkProcessor(client);		
+		BulkProcessor bulkProcessor = createBulkProcessor(client);
 
 		MyAppSource source = new MyAppSource();
 		MyAppCollector collector = new MyAppCollector();
@@ -59,47 +58,65 @@ public class MyAppCollectorApp {
 		source.Download("https://data.lacity.org/api/views/r4uk-afju/rows.csv?accessType=DOWNLOAD&bom=true",
 				"Businesses");
 
-		// Get downloaded file
-		File Crime15 = source.getDownloadedFile("Crime2015");
-		System.out.println("CHECKING FILE: " + Crime15.getName());
+		// Get downloaded files
 		File Crime04 = source.getDownloadedFile("Crime04-15");
-		System.out.println("CHECKING FILE: " + Crime04.getName());
+		File Crime15 = source.getDownloadedFile("Crime2015");
 		File Business = source.getDownloadedFile("Businesses");
-		System.out.println("CHECKING FILE: " + Business.getName());
 		File Property = source.getDownloadedFile("Property");
-		System.out.println("CHECKING FILE: " + Property.getName());
 
-		// Storing filtered data into CSV file
-		//collector.mungeeCrime15(Crime15,Crime15HeaderList,"FilteredCrimes15.csv");
-		
-		//collector.mungeeCrime04(Crime04,Crime04HeaderList,"FilteredCrimes04.csv");
-		
-		//collector.mungeeBusiness(Business, BusinessHeaderList, "FilteredBusiness.csv");
-		
-		// TODO Need testing
-		collector.mungeeProperty(Property, PropertyHeaderList, "FilteredProperty.csv");
-		System.out.println("FINISHED SAVING");
-		
+		// Get filtered files
+		File FilteredCrimes04 = new File(localPath + "FilteredCrimes04.csv");
+		File FilteredCrimes15 = new File(localPath + "FilteredCrimes15.csv");
+		File FilteredBusiness = new File(localPath + "FilteredBusiness.csv");
+		File FilteredProperty = new File(localPath + "FilteredProperty.csv");
+
+		// Mung & store data into csv files
+
+		if (!FilteredCrimes04.exists()) {
+			collector.mungeeCrime04(Crime04, Crime04HeaderList, "FilteredCrimes04.csv");
+			System.out.println("FINISHED SAVING");
+		} else {
+			System.out.println("FILE " + FilteredCrimes04.getName() + " EXISTS");
+		}
+
+		if (!FilteredCrimes15.exists()) {
+			collector.mungeeCrime15(Crime15, Crime15HeaderList, "FilteredCrimes15.csv");
+			System.out.println("FINISHED SAVING");
+		} else {
+			System.out.println("FILE " + FilteredCrimes15.getName() + " EXISTS");
+		}
+
+		if (!FilteredBusiness.exists()) {
+			collector.mungeeBusiness(Business, BusinessHeaderList, "FilteredBusiness.csv");
+			System.out.println("FINISHED SAVING");
+		} else {
+			System.out.println("FILE " + FilteredBusiness.getName() + " EXISTS");
+		}
+
+		if (!FilteredProperty.exists()) {
+			collector.mungeeProperty(Property, PropertyHeaderList, "FilteredProperty.csv");
+			System.out.println("FINISHED SAVING");
+		} else {
+			System.out.println("FILE " + FilteredProperty.getName() + " EXISTS");
+		}
+
 		// TODO Insert filtered data into elastic search
 		// TODO SHOW VISUALIZATION
+		// TODO Add to AWS
 	}
 
-	public static void aggregation(Node node,String indexName,String typeName) {
-		SearchResponse sr = node.client().prepareSearch(indexName)
-		            .setTypes(typeName)
-		            .setQuery(QueryBuilders.matchAllQuery())
-		            .addAggregation(
-		                AggregationBuilders.terms("stateAgg").field("state")
-		                    .size(Integer.MAX_VALUE)
-		            )
-		            .execute().actionGet();
+	public static void aggregation(Node node, String indexName, String typeName) {
+		SearchResponse sr = node.client().prepareSearch(indexName).setTypes(typeName)
+				.setQuery(QueryBuilders.matchAllQuery())
+				.addAggregation(AggregationBuilders.terms("stateAgg").field("state").size(Integer.MAX_VALUE)).execute()
+				.actionGet();
 
-		        // Get your facet results
-		        Terms agg1 = sr.getAggregations().get("stateAgg");
+		// Get your facet results
+		Terms agg1 = sr.getAggregations().get("stateAgg");
 
-		        for (Terms.Bucket bucket: agg1.getBuckets()) {
-		            System.out.println(bucket.getKey() + ": " + bucket.getDocCount());
-		        }
+		for (Terms.Bucket bucket : agg1.getBuckets()) {
+			System.out.println(bucket.getKey() + ": " + bucket.getDocCount());
+		}
 	}
 
 	public static BulkProcessor createBulkProcessor(Client client) {
@@ -124,24 +141,25 @@ public class MyAppCollectorApp {
 
 	public static String[] buildCrime15Header() {
 		String[] header = { "﻿CRIME_DATE", "STATION_IDENTIFIER", "CRIME_CATEGORY_DESCRIPTION", "STREET", "CITY",
-				"LATITUDE", "LONGITUDE","CRIME_IDENTIFIER" };
+				"LATITUDE", "LONGITUDE", "CRIME_IDENTIFIER" };
 		return header;
 	}
 
 	public static String[] buildCrime04Header() {
 		String[] header = { "﻿CRIME_DATE", "STATION_IDENTIFIER", "CRIME_CATEGORY_DESCRIPTION", "STREET", "CITY",
-				"LATITUDE", "LONGITUDE", "ZIP","CRIME_IDENTIFIER" };
+				"LATITUDE", "LONGITUDE", "ZIP", "CRIME_IDENTIFIER" };
 		return header;
 	}
 
 	public static String[] buildBusinessHeader() {
-		String[] header = { "LOCATION START DATE", "BUSINESS NAME", "STREET ADDRESS", "CITY", "ZIP CODE", "LOCATION","LOCATION ACCOUNT #" };
+		String[] header = { "LOCATION START DATE", "BUSINESS NAME", "STREET ADDRESS", "CITY", "ZIP CODE", "LOCATION",
+				"LOCATION ACCOUNT #" };
 		return header;
 	}
 
 	public static String[] buildPropertyHeader() {
 		String[] header = { "RecordingDate", "GeneralUseType", "StreetName", "City", "Units", "ZIPcode5", "CENTER_LAT",
-				"CENTER_LON" , "AssessorID"};
+				"CENTER_LON", "AssessorID" };
 		return header;
 	}
 

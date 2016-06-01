@@ -26,11 +26,11 @@ public class MyAppCollector {
 	// Gson library for sending json to elastic search
 	Gson gson = new Gson();
 	boolean HeaderFlag = false;
-	String filePath = Paths.get("src/main/resources/").toAbsolutePath().toString()+"\\";
-	
-	// Code taken from ElasticSearchExample used for reading big csv files	
-	public void mungeeCrime04(File csv, String[] HeaderList,String fileName) {
-		Map<String,String> CrimeIDs = new HashMap<String,String>();
+	String filePath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
+
+	// Code taken from ElasticSearchExample used for reading big csv files
+	public void mungeeCrime04(File csv, String[] HeaderList, String fileName) {
+		Map<String, String> CrimeIDs = new HashMap<String, String>();
 		String dateFormat = "mm/dd/yyyy hh:mm";
 		try {
 			// after reading the csv file, we will use CSVParser to parse though
@@ -38,9 +38,9 @@ public class MyAppCollector {
 			// for each record, we will add to ArrayList of it's object
 
 			parser.forEach(record -> {
-				
-				System.out.println("Checking record # "+record.getRecordNumber());
-				
+
+				System.out.println("Checking record # " + record.getRecordNumber());
+
 				// cleaning up dirty data which doesn't have date or zipCode
 				// location
 				if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[1]).isEmpty()) {
@@ -48,10 +48,12 @@ public class MyAppCollector {
 					String CDescription = record.get(HeaderList[2]);
 					String CStreet = record.get(HeaderList[3]);
 					String CCity = record.get(HeaderList[4]);
-					String CID = record.get(HeaderList[8]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[8]);
+					String CID = record.get(HeaderList[8]).isEmpty() ? String.valueOf(record.getRecordNumber())
+							: record.get(HeaderList[8]);
 					String CGeoLocation = correctGeoPointsCrime(record.get(HeaderList[5]), record.get(HeaderList[6]));
 
-					// Add zip code if exists and if not get it from station Identifier
+					// Add zip code if exists and if not get it from station
+					// Identifier
 					String CZipCode;
 					if (record.get(HeaderList[7]).isEmpty()) {
 						CZipCode = FilterZipCode(record.get(HeaderList[1]));
@@ -65,18 +67,19 @@ public class MyAppCollector {
 					} else {
 						if (!CrimeIDs.containsKey(CID)) {
 							CrimeIDs.put(CID, "");
-							Crime crime = new Crime(CID, CrimeDate, CDescription, CStreet, CCity, CGeoLocation, CZipCode);
+							Crime crime = new Crime(CID, CrimeDate, CDescription, CStreet, CCity, CGeoLocation,
+									CZipCode);
 							if (HeaderFlag == false) {
-								saveCrime(crime,filePath+fileName,HeaderFlag);
+								saveCrime(crime, filePath + fileName, HeaderFlag);
 								HeaderFlag = true;
-							}else{
-								saveCrime(crime,filePath+fileName,HeaderFlag);
+							} else {
+								saveCrime(crime, filePath + fileName, HeaderFlag);
 								System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 							}
 						} else {
 							System.out.println("=====> Dublicate found <=====");
 						}
-							
+
 					}
 				}
 			});
@@ -87,13 +90,14 @@ public class MyAppCollector {
 		}
 	}
 
-	// Code taken from example found at https://examples.javacodegeeks.com/core-java/apache/commons/csv-commons/writeread-csv-files-with-apache-commons-csv-example/
-	public void mungeeCrime15(File csv, String[] HeaderList,String fileName) {
+	// Code taken from example found at
+	// https://examples.javacodegeeks.com/core-java/apache/commons/csv-commons/writeread-csv-files-with-apache-commons-csv-example/
+	public void mungeeCrime15(File csv, String[] HeaderList, String fileName) {
 
-		Map<String,String> CrimeIDs = new HashMap<String,String>();
-		
+		Map<String, String> CrimeIDs = new HashMap<String, String>();
+
 		String dateFormat = "mm/dd/yyyy hh:mm";
-		
+
 		FileReader fileReader = null;
 
 		CSVParser csvFileParser = null;
@@ -110,14 +114,15 @@ public class MyAppCollector {
 
 			// Read the CSV file records starting from the second record to skip
 			for (int i = 1; i < csvRecords.size(); i++) {
-				System.out.println("Checking record # "+i);
+				System.out.println("Checking record # " + i);
 				CSVRecord record = csvRecords.get(i);
 				if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[1]).isEmpty()) {
 					String CrimeDate = FilterDate(record.get(HeaderList[0]), dateFormat);
 					String CDescription = record.get(HeaderList[2]);
 					String CStreet = record.get(HeaderList[3]);
 					String CCity = record.get(HeaderList[4]);
-					String CID = record.get(HeaderList[7]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[7]);
+					String CID = record.get(HeaderList[7]).isEmpty() ? String.valueOf(record.getRecordNumber())
+							: record.get(HeaderList[7]);
 					String CGeoLocation = correctGeoPointsCrime(record.get(HeaderList[5]), record.get(HeaderList[6]));
 
 					String CZipCode = FilterZipCode(record.get(HeaderList[1]));
@@ -128,20 +133,21 @@ public class MyAppCollector {
 					} else {
 						if (!CrimeIDs.containsKey(CID)) {
 							CrimeIDs.put(CID, "");
-							Crime crime = new Crime(CID, CrimeDate, CDescription, CStreet, CCity, CGeoLocation, CZipCode);
+							Crime crime = new Crime(CID, CrimeDate, CDescription, CStreet, CCity, CGeoLocation,
+									CZipCode);
 							if (HeaderFlag == false) {
-								saveCrime(crime,filePath+fileName,HeaderFlag);
+								saveCrime(crime, filePath + fileName, HeaderFlag);
 								HeaderFlag = true;
-							}else{
-								saveCrime(crime,filePath+fileName,HeaderFlag);
+							} else {
+								saveCrime(crime, filePath + fileName, HeaderFlag);
 								System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 							}
 						} else {
 							System.out.println("=====> Dublicate found <=====");
 						}
-					}	
+					}
 				}
-				}
+			}
 			CrimeIDs.clear();
 			HeaderFlag = false;
 		} catch (Exception e) {
@@ -159,22 +165,24 @@ public class MyAppCollector {
 	}
 
 	// Code taken from ElasticSearchExample used for reading big csv files
-	public void mungeeBusiness(File csv, String[] HeaderList,String fileName) {
+	public void mungeeBusiness(File csv, String[] HeaderList, String fileName) {
 
-		Map<String,String> BusinessIDs = new HashMap<String,String>();
-		
+		Map<String, String> BusinessIDs = new HashMap<String, String>();
+
 		String dateFormat = "mm/dd/yyyy";
 		String MinDate = "01/01/2004";
 		try {
-			// after reading the csv file, we will use CSVParser to parse through
+			// after reading the csv file, we will use CSVParser to parse
+			// through
 			CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
 			// for each record, we will add to ArrayList of it's object
 
 			parser.forEach(record -> {
-				
-				System.out.println("Checking record # "+record.getRecordNumber());
-				
-				// cleaning up dirty data which doesn't have date or zipCode location
+
+				System.out.println("Checking record # " + record.getRecordNumber());
+
+				// cleaning up dirty data which doesn't have date or zipCode
+				// location
 				if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[4]).isEmpty()) {
 					String BDate = FilterDate(record.get(HeaderList[0]), dateFormat);
 
@@ -183,34 +191,39 @@ public class MyAppCollector {
 						String BName = record.get(HeaderList[1]);
 						String BStreet = record.get(HeaderList[2]);
 						String BCity = record.get(HeaderList[3]);
-						String BID = record.get(HeaderList[6]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[6]);
+						String BID = record.get(HeaderList[6]).isEmpty() ? String.valueOf(record.getRecordNumber())
+								: record.get(HeaderList[6]);
 						String BGeoLocation = correctGeoPointsBusiness(record.get(HeaderList[5]));
 
 						// Add zip code if exists
-						String BZipCode = record.get(HeaderList[4]).length() >= 5 ? record.get(HeaderList[4]).substring(0, 5) : "";
-						
-						// if data doesn't contain ZIP code or coordinates delete it
+						String BZipCode = record.get(HeaderList[4]).length() >= 5
+								? record.get(HeaderList[4]).substring(0, 5) : "";
+
+						// if data doesn't contain ZIP code or coordinates
+						// delete it
 						if (BZipCode.isEmpty() && BGeoLocation.isEmpty()) {
 							System.out.println("DELETED FOR MISSING INFO");
 
 						} else {
 							if (!BusinessIDs.containsKey(BID)) {
 								BusinessIDs.put(BID, "");
-								Business business = new Business(BID, BName, BStreet, BCity, BZipCode, BGeoLocation, BDate);
+								Business business = new Business(BID, BName, BStreet, BCity, BZipCode, BGeoLocation,
+										BDate);
 								if (HeaderFlag == false) {
-									saveBusiness(business,filePath+fileName,HeaderFlag);
+									saveBusiness(business, filePath + fileName, HeaderFlag);
 									HeaderFlag = true;
-								}else{
-									saveBusiness(business,filePath+fileName,HeaderFlag);
-									System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
+								} else {
+									saveBusiness(business, filePath + fileName, HeaderFlag);
+									System.out.println(
+											"RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 								}
 							} else {
 								System.out.println("=====> Dublicate found <=====");
 							}
-								
-							}
+
 						}
 					}
+				}
 			});
 			BusinessIDs.clear();
 			HeaderFlag = false;
@@ -220,10 +233,10 @@ public class MyAppCollector {
 	}
 
 	// Code taken from ElasticSearchExample used for reading big csv files
-	public void mungeeProperty(File csv, String[] HeaderList,String fileName) {
+	public void mungeeProperty(File csv, String[] HeaderList, String fileName) {
 
-		Map<String,String> PropertyIDs = new HashMap<String,String>();
-		
+		Map<String, String> PropertyIDs = new HashMap<String, String>();
+
 		String dateFormat = "yyyymmdd";
 		String MinDate = "01/01/2004";
 		try {
@@ -232,11 +245,11 @@ public class MyAppCollector {
 			// through
 			CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
 			// for each record, we will add to ArrayList of it's object
-			
+
 			parser.forEach(record -> {
-				
-				System.out.println("Checking record # "+record.getRecordNumber());
-				
+
+				System.out.println("Checking record # " + record.getRecordNumber());
+
 				String PropertyType = record.get(HeaderList[1]);
 				// Check if property is commercial type
 				if (PropertyType.equals("Commercial")) {
@@ -249,36 +262,40 @@ public class MyAppCollector {
 						if (CheckDateRange(PDate, MinDate)) {
 							String PUnitsNo = record.get(HeaderList[4]);
 
-							
-								String PStreet = record.get(HeaderList[2]);
-								String PCity = record.get(HeaderList[3]);
-								String PGeoLocation = correctGeoPointsCrime(record.get(HeaderList[6]),record.get(HeaderList[7]));
-								String PID = record.get(HeaderList[8]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[8]);
-								// Add zip code if exists and if not get it from
-								// station identifier
-								String PZipCode = record.get(HeaderList[5]);
+							String PStreet = record.get(HeaderList[2]);
+							String PCity = record.get(HeaderList[3]);
+							String PGeoLocation = correctGeoPointsCrime(record.get(HeaderList[6]),
+									record.get(HeaderList[7]));
+							String PID = record.get(HeaderList[8]).isEmpty() ? String.valueOf(record.getRecordNumber())
+									: record.get(HeaderList[8]);
+							// Add zip code if exists and if not get it from
+							// station identifier
+							String PZipCode = record.get(HeaderList[5]);
 
-								// if data doesn't contain ZIP code or coordinates delete it
-								if (PZipCode.isEmpty() && PGeoLocation.isEmpty()) {
-									System.out.println("DELETED FOR MISSING INFO");
+							// if data doesn't contain ZIP code or coordinates
+							// delete it
+							if (PZipCode.isEmpty() && PGeoLocation.isEmpty()) {
+								System.out.println("DELETED FOR MISSING INFO");
 
-								} else {
-									if (!PropertyIDs.containsKey(PID)) {
-										PropertyIDs.put(PID,PID);
-										Property property = new Property(PID,PDate, PStreet, PCity, PZipCode, PUnitsNo,PGeoLocation);
-										if (HeaderFlag == false) {
-											saveProperty(property,filePath+fileName,HeaderFlag);
-											HeaderFlag = true;
-										}else{
-											saveProperty(property,filePath+fileName,HeaderFlag);
-											System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
-										}
+							} else {
+								if (!PropertyIDs.containsKey(PID)) {
+									PropertyIDs.put(PID, PID);
+									Property property = new Property(PID, PDate, PStreet, PCity, PZipCode, PUnitsNo,
+											PGeoLocation);
+									if (HeaderFlag == false) {
+										saveProperty(property, filePath + fileName, HeaderFlag);
+										HeaderFlag = true;
 									} else {
-										System.out.println("=====> Dublicate found <=====");
+										saveProperty(property, filePath + fileName, HeaderFlag);
+										System.out.println(
+												"RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 									}
-									
+								} else {
+									System.out.println("=====> Dublicate found <=====");
 								}
-							
+
+							}
+
 						}
 					}
 				}
@@ -376,43 +393,43 @@ public class MyAppCollector {
 			return newlat + "," + newlog;
 		}
 	}
-	
-	public void saveCrime(Crime Crime, String fileName,boolean headerFlag) {
-		//Delimiter used in CSV file
+
+	public void saveCrime(Crime Crime, String fileName, boolean headerFlag) {
+		// Delimiter used in CSV file
 		String NEW_LINE_SEPARATOR = "\n";
-		
-		String[] HeaderList = { "CRIME_ID","CRIME_DATE", "ZIP_CODE", "CRIME_DESCRIPTION", "STREET", "CITY", "GEO_LOCATION"};
-		
+
+		String[] HeaderList = { "CRIME_ID", "CRIME_DATE", "ZIP_CODE", "CRIME_DESCRIPTION", "STREET", "CITY",
+				"GEO_LOCATION" };
+
 		FileWriter fileWriter = null;
-		
+
 		CSVPrinter csvFilePrinter = null;
-		
-		//Create the CSVFormat object with "\n" as a record delimiter
-        CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-        
+
+		// Create the CSVFormat object with "\n" as a record delimiter
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+
 		try {
-			//initialize FileWriter object
+			// initialize FileWriter object
 			fileWriter = new FileWriter(fileName, true);
-			
-			
-			//initialize CSVPrinter object 
-	        csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-	        
-	        if (!headerFlag) {
-	        	//Create CSV file header
-		        csvFilePrinter.printRecord(HeaderList);
+
+			// initialize CSVPrinter object
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+			if (!headerFlag) {
+				// Create CSV file header
+				csvFilePrinter.printRecord(HeaderList);
 			}
-		        
-				//Write a new object list to the CSV file
-		            List DataRecord = new ArrayList();
-		            DataRecord.add(Crime.getCID());
-		            DataRecord.add(Crime.getCDate());
-		            DataRecord.add(Crime.getZipCode());
-		            DataRecord.add(Crime.getDescription());
-		            DataRecord.add(Crime.getStreet());
-		            DataRecord.add(Crime.getCity());
-		            DataRecord.add(Crime.getGeoLocation());
-		            csvFilePrinter.printRecord(DataRecord);			
+
+			// Write a new object list to the CSV file
+			List DataRecord = new ArrayList();
+			DataRecord.add(Crime.getCID());
+			DataRecord.add(Crime.getCDate());
+			DataRecord.add(Crime.getZipCode());
+			DataRecord.add(Crime.getDescription());
+			DataRecord.add(Crime.getStreet());
+			DataRecord.add(Crime.getCity());
+			DataRecord.add(Crime.getGeoLocation());
+			csvFilePrinter.printRecord(DataRecord);
 		} catch (Exception e) {
 			System.out.println("Error in CsvFileWriter !!!");
 			e.printStackTrace();
@@ -423,47 +440,48 @@ public class MyAppCollector {
 				csvFilePrinter.close();
 			} catch (IOException e) {
 				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
-                e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
-	public void saveBusiness(Business Business, String fileName,boolean headerFlag) {
-		//Delimiter used in CSV file
+
+	public void saveBusiness(Business Business, String fileName, boolean headerFlag) {
+		// Delimiter used in CSV file
 		String NEW_LINE_SEPARATOR = "\n";
-		
-		String[] HeaderList = { "BUSINESS_ID", "BUSINESS_DATE", "BUSINESS_NAME", "BUSINESS_ADDRESS", "CITY", "ZIP_CODE", "GEO_LOCATION" };
-		
+
+		String[] HeaderList = { "BUSINESS_ID", "BUSINESS_DATE", "BUSINESS_NAME", "BUSINESS_ADDRESS", "CITY", "ZIP_CODE",
+				"GEO_LOCATION" };
+
 		FileWriter fileWriter = null;
-		
+
 		CSVPrinter csvFilePrinter = null;
-		
-		//Create the CSVFormat object with "\n" as a record delimiter
-        CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-        
+
+		// Create the CSVFormat object with "\n" as a record delimiter
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+
 		try {
-			//initialize FileWriter object
+			// initialize FileWriter object
 			fileWriter = new FileWriter(fileName, true);
-			
-			//initialize CSVPrinter object 
-	        csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-	        
-	        if (!headerFlag) {
-	        	//Create CSV file header
-		        csvFilePrinter.printRecord(HeaderList);
+
+			// initialize CSVPrinter object
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+			if (!headerFlag) {
+				// Create CSV file header
+				csvFilePrinter.printRecord(HeaderList);
 			}
-				//Write a new object list to the CSV file
-		            List DataRecord = new ArrayList();
-		            DataRecord.add(Business.getBID());
-		            DataRecord.add(Business.getStartdate());
-		            DataRecord.add(Business.getBName());
-		            DataRecord.add(Business.getAddress());
-		            DataRecord.add(Business.getCity());
-		            DataRecord.add(Business.getZipCode());
-		            DataRecord.add(Business.getGeoLocation());
-		            csvFilePrinter.printRecord(DataRecord);
-			
+			// Write a new object list to the CSV file
+			List DataRecord = new ArrayList();
+			DataRecord.add(Business.getBID());
+			DataRecord.add(Business.getStartdate());
+			DataRecord.add(Business.getBName());
+			DataRecord.add(Business.getAddress());
+			DataRecord.add(Business.getCity());
+			DataRecord.add(Business.getZipCode());
+			DataRecord.add(Business.getGeoLocation());
+			csvFilePrinter.printRecord(DataRecord);
+
 		} catch (Exception e) {
 			System.out.println("Error in CsvFileWriter !!!");
 			e.printStackTrace();
@@ -474,49 +492,49 @@ public class MyAppCollector {
 				csvFilePrinter.close();
 			} catch (IOException e) {
 				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
-                e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
-	public void saveProperty(Property Property, String fileName,boolean headerFlag) {
-		//Delimiter used in CSV file
+
+	public void saveProperty(Property Property, String fileName, boolean headerFlag) {
+		// Delimiter used in CSV file
 		String NEW_LINE_SEPARATOR = "\n";
-		
-		String[] HeaderList = { "PROPERTY_ID","PROPERTY_DATE", "ZIP_CODE", "UNITS_NO", "STREET", "CITY", "GEO_LOCATION"};
-		
+
+		String[] HeaderList = { "PROPERTY_ID", "PROPERTY_DATE", "ZIP_CODE", "UNITS_NO", "STREET", "CITY",
+				"GEO_LOCATION" };
+
 		FileWriter fileWriter = null;
-		
+
 		CSVPrinter csvFilePrinter = null;
-		
-		//Create the CSVFormat object with "\n" as a record delimiter
-        CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-        
+
+		// Create the CSVFormat object with "\n" as a record delimiter
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+
 		try {
-			//initialize FileWriter object
+			// initialize FileWriter object
 			fileWriter = new FileWriter(fileName, true);
-			
-			
-			//initialize CSVPrinter object 
-	        csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
-	        
-	        if (!headerFlag) {
-	        	//Create CSV file header
-		        csvFilePrinter.printRecord(HeaderList);
+
+			// initialize CSVPrinter object
+			csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
+			if (!headerFlag) {
+				// Create CSV file header
+				csvFilePrinter.printRecord(HeaderList);
 			}
-		        
-				//Write a new object list to the CSV file
-		            List DataRecord = new ArrayList();
-		            DataRecord.add(Property.getPID());
-		            DataRecord.add(Property.getRecordingDate());
-		            DataRecord.add(Property.getZipCode());
-		            DataRecord.add(Property.getUnitNo());
-		            DataRecord.add(Property.getStreetName());
-		            DataRecord.add(Property.getCityName());
-		            DataRecord.add(Property.getGeoLocation());
-		            csvFilePrinter.printRecord(DataRecord);
-			
+
+			// Write a new object list to the CSV file
+			List DataRecord = new ArrayList();
+			DataRecord.add(Property.getPID());
+			DataRecord.add(Property.getRecordingDate());
+			DataRecord.add(Property.getZipCode());
+			DataRecord.add(Property.getUnitNo());
+			DataRecord.add(Property.getStreetName());
+			DataRecord.add(Property.getCityName());
+			DataRecord.add(Property.getGeoLocation());
+			csvFilePrinter.printRecord(DataRecord);
+
 		} catch (Exception e) {
 			System.out.println("Error in CsvFileWriter !!!");
 			e.printStackTrace();
@@ -527,10 +545,10 @@ public class MyAppCollector {
 				csvFilePrinter.close();
 			} catch (IOException e) {
 				System.out.println("Error while flushing/closing fileWriter/csvPrinter !!!");
-                e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
-		
+
 	}
 
 }
