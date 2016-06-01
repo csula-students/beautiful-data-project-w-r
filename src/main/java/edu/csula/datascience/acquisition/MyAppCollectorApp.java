@@ -4,6 +4,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.elasticsearch.action.bulk.BackoffPolicy;
@@ -28,6 +29,7 @@ public class MyAppCollectorApp {
 	private final static String CrimeTypeName04 = "Crimes04";
 	private final static String PropertyTypeName = "Properties";
 	private final static String BusinessTypeName = "Businesses";
+	private final static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString()+"\\";
 
 	public static void main(String[] args) throws URISyntaxException {
 
@@ -67,37 +69,18 @@ public class MyAppCollectorApp {
 		File Property = source.getDownloadedFile("Property");
 		System.out.println("CHECKING FILE: " + Property.getName());
 
-		// FINALL AND READY FOR USE
-		 //Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName15);
-		 /*for (String id : crimes15.keySet()) {
-			 System.out.println("CRIME ID: "+crimes15.get(id).getCID());
-		}*/
-		 
-		// FINALL AND READY FOR USE
-		 Map<String,Crime> crimes2004 = collector.mungeeCrime04(Crime04,Crime04HeaderList,bulkProcessor,indexName,CrimeTypeName04);
-		 /*for (String id : crimes2004.keySet()) {
-			 System.out.println("CRIME ID: "+crimes2004.get(id).getCID());
-		}*/
+		// Storing filtered data into CSV file
+		//collector.mungeeCrime15(Crime15,Crime15HeaderList,"FilteredCrimes15.csv");
+		
+		//collector.mungeeCrime04(Crime04,Crime04HeaderList,"FilteredCrimes04.csv");
+		
+		//collector.mungeeBusiness(Business, BusinessHeaderList, "FilteredBusiness.csv");
+		
+		// TODO Need testing
+		collector.mungeeProperty(Property, PropertyHeaderList, "FilteredProperty.csv");
 
-		// FINALL AND READY FOR USE
-		 //Map<String,Business> businesses = collector.mungeeBusiness(Business,BusinessHeaderList,bulkProcessor,indexName,BusinessTypeName);
-		 /*for (String id : businesses.keySet()) {
-			 System.out.println("Business ID: "+businesses.get(id).getCID());
-		}*/
-
-		// FINALL AND READY FOR USE		 
-		 //Map<String,Property> properties = collector.mungeeProperty(Property,PropertyHeaderList,bulkProcessor,indexName,PropertyTypeName);
-		 /*for (String id : properties.keySet()) {
-			 System.out.println("Property ID: "+properties.get(id).getCID());
-		}*/
-
+		// TODO Insert filtered data into elastic search
 		// TODO SHOW VISUALIZATION
-		 
-		 // Aggregation
-		 //aggregation(node);
-
-		// Not implemented
-		// collector.save(Map<String,Property> props);
 	}
 
 	public static void aggregation(Node node,String indexName,String typeName) {
