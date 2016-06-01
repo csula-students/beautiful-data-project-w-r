@@ -68,13 +68,13 @@ public class MyAppCollectorApp {
 		System.out.println("CHECKING FILE: " + Property.getName());
 
 		// FINALL AND READY FOR USE
-		 Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName15);
+		 //Map<String,Crime> crimes15 = collector.mungeeCrime15(Crime15,Crime15HeaderList,bulkProcessor,indexName,CrimeTypeName15);
 		 /*for (String id : crimes15.keySet()) {
 			 System.out.println("CRIME ID: "+crimes15.get(id).getCID());
 		}*/
 		 
 		// FINALL AND READY FOR USE
-		// Map<String,Crime> crimes2004 = collector.mungeeCrime04(Crime04,Crime04HeaderList,bulkProcessor,indexName,CrimeTypeName04);
+		 Map<String,Crime> crimes2004 = collector.mungeeCrime04(Crime04,Crime04HeaderList,bulkProcessor,indexName,CrimeTypeName04);
 		 /*for (String id : crimes2004.keySet()) {
 			 System.out.println("CRIME ID: "+crimes2004.get(id).getCID());
 		}*/
