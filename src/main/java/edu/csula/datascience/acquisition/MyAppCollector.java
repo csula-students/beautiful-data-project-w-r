@@ -38,6 +38,9 @@ public class MyAppCollector {
 			// for each record, we will add to ArrayList of it's object
 
 			parser.forEach(record -> {
+				
+				System.out.println("Checking record # "+record.getRecordNumber());
+				
 				// cleaning up dirty data which doesn't have date or zipCode
 				// location
 				if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[1]).isEmpty()) {
@@ -68,10 +71,10 @@ public class MyAppCollector {
 								HeaderFlag = true;
 							}else{
 								saveCrime(crime,filePath+fileName,HeaderFlag);
-								System.out.println("Record Num: "+record.getRecordNumber());
+								System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 							}
 						} else {
-							System.out.println("Dublicate found");
+							System.out.println("=====> Dublicate found <=====");
 						}
 							
 					}
@@ -107,6 +110,7 @@ public class MyAppCollector {
 
 			// Read the CSV file records starting from the second record to skip
 			for (int i = 1; i < csvRecords.size(); i++) {
+				System.out.println("Checking record # "+i);
 				CSVRecord record = csvRecords.get(i);
 				if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[1]).isEmpty()) {
 					String CrimeDate = FilterDate(record.get(HeaderList[0]), dateFormat);
@@ -130,10 +134,10 @@ public class MyAppCollector {
 								HeaderFlag = true;
 							}else{
 								saveCrime(crime,filePath+fileName,HeaderFlag);
-								System.out.println("Record Num: "+record.getRecordNumber());
+								System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 							}
 						} else {
-							System.out.println("Dublicate found");
+							System.out.println("=====> Dublicate found <=====");
 						}
 					}	
 				}
@@ -167,6 +171,9 @@ public class MyAppCollector {
 			// for each record, we will add to ArrayList of it's object
 
 			parser.forEach(record -> {
+				
+				System.out.println("Checking record # "+record.getRecordNumber());
+				
 				// cleaning up dirty data which doesn't have date or zipCode location
 				if (!record.get(HeaderList[0]).isEmpty() && !record.get(HeaderList[4]).isEmpty()) {
 					String BDate = FilterDate(record.get(HeaderList[0]), dateFormat);
@@ -195,10 +202,10 @@ public class MyAppCollector {
 									HeaderFlag = true;
 								}else{
 									saveBusiness(business,filePath+fileName,HeaderFlag);
-									System.out.println("Record Num: "+record.getRecordNumber());
+									System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 								}
 							} else {
-								System.out.println("Dublicate found");
+								System.out.println("=====> Dublicate found <=====");
 							}
 								
 							}
@@ -227,8 +234,10 @@ public class MyAppCollector {
 			// for each record, we will add to ArrayList of it's object
 			
 			parser.forEach(record -> {
-				String PropertyType = record.get(HeaderList[1]);
+				
 				System.out.println("Checking record # "+record.getRecordNumber());
+				
+				String PropertyType = record.get(HeaderList[1]);
 				// Check if property is commercial type
 				if (PropertyType.equals("Commercial")) {
 
@@ -240,12 +249,10 @@ public class MyAppCollector {
 						if (CheckDateRange(PDate, MinDate)) {
 							String PUnitsNo = record.get(HeaderList[4]);
 
-							// Check if unit counts are more than 0
-							if (Integer.parseInt(PUnitsNo) > 0) {
+							
 								String PStreet = record.get(HeaderList[2]);
 								String PCity = record.get(HeaderList[3]);
-								String PGeoLocation = correctGeoPointsCrime(record.get(HeaderList[6]),
-										record.get(HeaderList[7]));
+								String PGeoLocation = correctGeoPointsCrime(record.get(HeaderList[6]),record.get(HeaderList[7]));
 								String PID = record.get(HeaderList[8]).isEmpty() ? String.valueOf(record.getRecordNumber()) : record.get(HeaderList[8]);
 								// Add zip code if exists and if not get it from
 								// station identifier
@@ -257,21 +264,21 @@ public class MyAppCollector {
 
 								} else {
 									if (!PropertyIDs.containsKey(PID)) {
-										PropertyIDs.put(PID,"");
+										PropertyIDs.put(PID,PID);
 										Property property = new Property(PID,PDate, PStreet, PCity, PZipCode, PUnitsNo,PGeoLocation);
 										if (HeaderFlag == false) {
 											saveProperty(property,filePath+fileName,HeaderFlag);
 											HeaderFlag = true;
 										}else{
 											saveProperty(property,filePath+fileName,HeaderFlag);
-											System.out.println("Record Num: "+record.getRecordNumber());
+											System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 										}
 									} else {
-										System.out.println("Dublicate found");
+										System.out.println("=====> Dublicate found <=====");
 									}
 									
 								}
-							}
+							
 						}
 					}
 				}

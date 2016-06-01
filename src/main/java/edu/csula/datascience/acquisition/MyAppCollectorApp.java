@@ -78,7 +78,8 @@ public class MyAppCollectorApp {
 		
 		// TODO Need testing
 		collector.mungeeProperty(Property, PropertyHeaderList, "FilteredProperty.csv");
-
+		System.out.println("FINISHED SAVING");
+		
 		// TODO Insert filtered data into elastic search
 		// TODO SHOW VISUALIZATION
 	}
