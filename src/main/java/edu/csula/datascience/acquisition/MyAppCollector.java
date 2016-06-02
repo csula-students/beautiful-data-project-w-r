@@ -29,16 +29,18 @@ public class MyAppCollector {
 	Gson gson = new Gson();
 			
 	boolean HeaderFlag = false;
-	String filePath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
+	
 	String[] PropertyHeaderList = { "PROPERTY_ID", "PROPERTY_DATE", "ZIP_CODE", "UNITS_NO", "STREET", "CITY",
 	"GEO_LOCATION" };
 	String[] BusinessHeaderList = { "BUSINESS_ID", "BUSINESS_DATE", "BUSINESS_NAME", "BUSINESS_ADDRESS", "CITY", "ZIP_CODE",
 	"GEO_LOCATION" };
 	String[] CrimeHeaderList = { "CRIME_ID", "CRIME_DATE", "ZIP_CODE", "CRIME_DESCRIPTION", "STREET", "CITY",
 	"GEO_LOCATION" };
+	
+	String[] HeaderListToAll = { "ID", "DATE", "STREET", "CITY","ZIP_CODE",	"GEO_LOCATION", "SOURCE" };
 
 	// Code taken from ElasticSearchExample used for reading big csv files
-	public void mungeeCrime04(File csv, String[] HeaderList, String fileName) {
+	public void mungeeCrime04(File csv, String[] HeaderList, File fileName) {
 		Map<String, String> CrimeIDs = new HashMap<String, String>();
 		String dateFormat = "mm/dd/yyyy hh:mm";
 		try {
@@ -79,10 +81,10 @@ public class MyAppCollector {
 							Crime crime = new Crime(CID, CrimeDate, CDescription, CStreet, CCity, CGeoLocation,
 									CZipCode);
 							if (HeaderFlag == false) {
-								saveCrime(crime, filePath + fileName, HeaderFlag);
+								saveCrime(crime, fileName.getAbsolutePath(), HeaderFlag);
 								HeaderFlag = true;
 							} else {
-								saveCrime(crime, filePath + fileName, HeaderFlag);
+								saveCrime(crime, fileName.getAbsolutePath(), HeaderFlag);
 								System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 							}
 						} else {
@@ -101,7 +103,7 @@ public class MyAppCollector {
 
 	// Code taken from example found at
 	// https://examples.javacodegeeks.com/core-java/apache/commons/csv-commons/writeread-csv-files-with-apache-commons-csv-example/
-	public void mungeeCrime15(File csv, String[] HeaderList, String fileName) {
+	public void mungeeCrime15(File csv, String[] HeaderList, File fileName) {
 
 		Map<String, String> CrimeIDs = new HashMap<String, String>();
 
@@ -145,10 +147,10 @@ public class MyAppCollector {
 							Crime crime = new Crime(CID, CrimeDate, CDescription, CStreet, CCity, CGeoLocation,
 									CZipCode);
 							if (HeaderFlag == false) {
-								saveCrime(crime, filePath + fileName, HeaderFlag);
+								saveCrime(crime, fileName.getAbsolutePath(), HeaderFlag);
 								HeaderFlag = true;
 							} else {
-								saveCrime(crime, filePath + fileName, HeaderFlag);
+								saveCrime(crime, fileName.getAbsolutePath(), HeaderFlag);
 								System.out.println("RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 							}
 						} else {
@@ -174,7 +176,7 @@ public class MyAppCollector {
 	}
 
 	// Code taken from ElasticSearchExample used for reading big csv files
-	public void mungeeBusiness(File csv, String[] HeaderList, String fileName) {
+	public void mungeeBusiness(File csv, String[] HeaderList, File fileName) {
 
 		Map<String, String> BusinessIDs = new HashMap<String, String>();
 
@@ -219,10 +221,10 @@ public class MyAppCollector {
 								Business business = new Business(BID, BName, BStreet, BCity, BZipCode, BGeoLocation,
 										BDate);
 								if (HeaderFlag == false) {
-									saveBusiness(business, filePath + fileName, HeaderFlag);
+									saveBusiness(business,fileName.getAbsolutePath(), HeaderFlag);
 									HeaderFlag = true;
 								} else {
-									saveBusiness(business, filePath + fileName, HeaderFlag);
+									saveBusiness(business,fileName.getAbsolutePath(), HeaderFlag);
 									System.out.println(
 											"RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 								}
@@ -242,7 +244,7 @@ public class MyAppCollector {
 	}
 
 	// Code taken from ElasticSearchExample used for reading big csv files
-	public void mungeeProperty(File csv, String[] HeaderList, String fileName) {
+	public void mungeeProperty(File csv, String[] HeaderList, File fileName) {
 
 		Map<String, String> PropertyIDs = new HashMap<String, String>();
 
@@ -292,10 +294,10 @@ public class MyAppCollector {
 									Property property = new Property(PID, PDate, PStreet, PCity, PZipCode, PUnitsNo,
 											PGeoLocation);
 									if (HeaderFlag == false) {
-										saveProperty(property, filePath + fileName, HeaderFlag);
+										saveProperty(property,fileName.getAbsolutePath(), HeaderFlag);
 										HeaderFlag = true;
 									} else {
-										saveProperty(property, filePath + fileName, HeaderFlag);
+										saveProperty(property,fileName.getAbsolutePath(), HeaderFlag);
 										System.out.println(
 												"RECORDED INFO AT LINE NUMBER ======> " + record.getRecordNumber());
 									}
@@ -336,18 +338,18 @@ public class MyAppCollector {
 
 			if (!headerFlag) {
 				// Create CSV file header
-				csvFilePrinter.printRecord(CrimeHeaderList);
+				csvFilePrinter.printRecord(HeaderListToAll);
 			}
 
 			// Write a new object list to the CSV file
 			List DataRecord = new ArrayList();
 			DataRecord.add(Crime.getCID());
 			DataRecord.add(Crime.getCDate());
-			DataRecord.add(Crime.getZipCode());
-			DataRecord.add(Crime.getDescription());
 			DataRecord.add(Crime.getStreet());
 			DataRecord.add(Crime.getCity());
+			DataRecord.add(Crime.getZipCode());
 			DataRecord.add(Crime.getGeoLocation());
+			DataRecord.add("Crime");
 			csvFilePrinter.printRecord(DataRecord);
 		} catch (Exception e) {
 			System.out.println("Error in CsvFileWriter !!!");
@@ -385,17 +387,17 @@ public class MyAppCollector {
 
 			if (!headerFlag) {
 				// Create CSV file header
-				csvFilePrinter.printRecord(BusinessHeaderList);
+				csvFilePrinter.printRecord(HeaderListToAll);
 			}
 			// Write a new object list to the CSV file
 			List DataRecord = new ArrayList();
 			DataRecord.add(Business.getBID());
 			DataRecord.add(Business.getStartdate());
-			DataRecord.add(Business.getBName());
 			DataRecord.add(Business.getAddress());
 			DataRecord.add(Business.getCity());
 			DataRecord.add(Business.getZipCode());
 			DataRecord.add(Business.getGeoLocation());
+			DataRecord.add("Business");
 			csvFilePrinter.printRecord(DataRecord);
 
 		} catch (Exception e) {
@@ -434,18 +436,18 @@ public class MyAppCollector {
 
 			if (!headerFlag) {
 				// Create CSV file header
-				csvFilePrinter.printRecord(PropertyHeaderList);
+				csvFilePrinter.printRecord(HeaderListToAll);
 			}
 
 			// Write a new object list to the CSV file
 			List DataRecord = new ArrayList();
 			DataRecord.add(Property.getPID());
 			DataRecord.add(Property.getRecordingDate());
-			DataRecord.add(Property.getZipCode());
-			DataRecord.add(Property.getUnitNo());
 			DataRecord.add(Property.getStreetName());
 			DataRecord.add(Property.getCityName());
+			DataRecord.add(Property.getZipCode());
 			DataRecord.add(Property.getGeoLocation());
+			DataRecord.add("Property");
 			csvFilePrinter.printRecord(DataRecord);
 
 		} catch (Exception e) {
@@ -461,27 +463,9 @@ public class MyAppCollector {
 				e.printStackTrace();
 			}
 		}
-
-	}
-	
-	public void CombineCrimeFiles(File FromCSV, File ToCSV) {
-		
-		try {
-			CSVParser parser = CSVParser.parse(FromCSV, Charset.defaultCharset(), CSVFormat.EXCEL.withHeader());
-
-			parser.forEach(record -> {	
-				Crime crime = new Crime(record.get(CrimeHeaderList[0]), record.get(CrimeHeaderList[1]),
-						record.get(CrimeHeaderList[3]), record.get(CrimeHeaderList[4]), record.get(CrimeHeaderList[5]),
-						record.get(CrimeHeaderList[6]), record.get(CrimeHeaderList[2]));
-				saveCrime(crime,ToCSV.getAbsolutePath(),true);
-			});
-			parser.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
-	public void Crime_ToElasticSearch(File csv, BulkProcessor bulkProcessor, String index, String type) {
+	public void ToElasticSearch(File csv, BulkProcessor bulkProcessor, String index, String type) {
 
 		try {
 
@@ -489,13 +473,11 @@ public class MyAppCollector {
 
 			parser.forEach(record -> {
 				
-				Crime crime = new Crime(record.get(CrimeHeaderList[0]), record.get(CrimeHeaderList[1]),
-						record.get(CrimeHeaderList[3]), record.get(CrimeHeaderList[4]), record.get(CrimeHeaderList[5]),
-						record.get(CrimeHeaderList[6]), record.get(CrimeHeaderList[2]));
+				FilteredDataObject data = new FilteredDataObject(record.get(HeaderListToAll[0]),record.get(HeaderListToAll[1]),record.get(HeaderListToAll[2])
+				,record.get(HeaderListToAll[3]),record.get(HeaderListToAll[4]),record.get(HeaderListToAll[5]),record.get(HeaderListToAll[6]));
 				
-				bulkProcessor.add(new IndexRequest(index, type).source(gson.toJson(crime)));
-				
-				System.out.println("Adding to elasticsearch record # " + record.getRecordNumber());
+				bulkProcessor.add(new IndexRequest(index, type).source(gson.toJson(data)));
+				System.out.println("Record # " + record.getRecordNumber() + " has been added to elasticsearch");
 			});
 			parser.close();
 			System.out.println("Done uploading to elasticsearch!");

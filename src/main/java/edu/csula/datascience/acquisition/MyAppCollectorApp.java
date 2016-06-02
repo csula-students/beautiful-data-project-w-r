@@ -24,9 +24,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 public class MyAppCollectorApp {
 
 	private final static String indexName = "bd-business";
-	private final static String CrimeTypeName = "Crimes";
-	private final static String PropertyTypeName = "Properties";
-	private final static String BusinessTypeName = "Businesses";
+	private final static String TypeName = "Crime_Business";
 	private final static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
 
 	public static void main(String[] args) throws URISyntaxException {
@@ -63,51 +61,30 @@ public class MyAppCollectorApp {
 		File Business = source.getDownloadedFile("Businesses");
 		File Property = source.getDownloadedFile("Property");
 
-		// Get filtered files
-		File FilteredCrimes04 = new File(localPath + "FilteredCrimes04.csv");
-		File FilteredCrimes15 = new File(localPath + "FilteredCrimes15.csv");
-		File FilteredBusiness = new File(localPath + "FilteredBusiness.csv");
-		File FilteredProperty = new File(localPath + "FilteredProperty.csv");
+		// Get Filtered data in one file
+		File FilteredDataFile = new File(localPath + "FilteredDataFile.csv");
 
 		// Mung & store data into csv files
 
-		if (!FilteredCrimes04.exists()) {
-			collector.mungeeCrime04(Crime04, Crime04HeaderList, "FilteredCrimes04.csv");
+		if (!FilteredDataFile.exists()) {
+			collector.mungeeCrime04(Crime04, Crime04HeaderList, FilteredDataFile);
 			System.out.println("FINISHED SAVING FilteredCrimes04.csv");
-		} else {
-			System.out.println("FILE " + FilteredCrimes04.getName() + " EXISTS");
-		}
-
-		if (!FilteredCrimes15.exists()) {
-			collector.mungeeCrime15(Crime15, Crime15HeaderList, "FilteredCrimes15.csv");
+			
+			collector.mungeeCrime15(Crime15, Crime15HeaderList, FilteredDataFile);
 			System.out.println("FINISHED SAVING FilteredCrimes15.csv");
-		} else {
-			System.out.println("FILE " + FilteredCrimes15.getName() + " EXISTS");
-		}
-
-		if (!FilteredBusiness.exists()) {
-			collector.mungeeBusiness(Business, BusinessHeaderList, "FilteredBusiness.csv");
+			
+			collector.mungeeBusiness(Business, BusinessHeaderList, FilteredDataFile);
 			System.out.println("FINISHED SAVING FilteredBusiness.csv");
-		} else {
-			System.out.println("FILE " + FilteredBusiness.getName() + " EXISTS");
-		}
-
-		if (!FilteredProperty.exists()) {
-			collector.mungeeProperty(Property, PropertyHeaderList, "FilteredProperty.csv");
+			
+			collector.mungeeProperty(Property, PropertyHeaderList, FilteredDataFile);
 			System.out.println("FINISHED SAVING FilteredProperty.csv");
 		} else {
-			System.out.println("FILE " + FilteredProperty.getName() + " EXISTS");
+			System.out.println("FILE " + FilteredDataFile.getName() + " EXISTS");
 		}
-		
-		collector.CombineCrimeFiles(FilteredCrimes15, FilteredCrimes04);
-		System.out.println("Combining complete!");
 
-		// Using FilteredCrime04 after combining Crime15 with it
-		collector.Crime_ToElasticSearch(FilteredCrimes04,bulkProcessor,indexName,CrimeTypeName);
-		collector.Business_ToElasticSearch(FilteredBusiness,bulkProcessor,indexName,BusinessTypeName);
-		collector.Property_ToElasticSearch(FilteredProperty,bulkProcessor,indexName,PropertyTypeName);
+		// Upload to elasticsearch
+		collector.ToElasticSearch(FilteredDataFile,bulkProcessor,indexName,TypeName);
 		
-		System.out.println("Uploading to elasticsearch is done!!");
 		// TODO SHOW VISUALIZATION
 		// TODO Add to AWS
 	}
