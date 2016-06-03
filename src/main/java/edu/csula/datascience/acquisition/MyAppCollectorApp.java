@@ -85,8 +85,7 @@ public class MyAppCollectorApp {
 		// Upload to elasticsearch
 		collector.ToElasticSearch(FilteredDataFile,bulkProcessor,indexName,TypeName);
 		
-		// Aggregation not used
-		//aggregation(node,indexName,TypeName);
+		
 		// TODO Add to AWS FOR HW4
 	}
 
