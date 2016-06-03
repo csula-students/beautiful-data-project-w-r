@@ -85,18 +85,19 @@ public class MyAppCollectorApp {
 		// Upload to elasticsearch
 		collector.ToElasticSearch(FilteredDataFile,bulkProcessor,indexName,TypeName);
 		
-		// TODO SHOW VISUALIZATION
-		// TODO Add to AWS
+		// Aggregation not used
+		//aggregation(node,indexName,TypeName);
+		// TODO Add to AWS FOR HW4
 	}
 
 	public static void aggregation(Node node, String indexName, String typeName) {
 		SearchResponse sr = node.client().prepareSearch(indexName).setTypes(typeName)
 				.setQuery(QueryBuilders.matchAllQuery())
-				.addAggregation(AggregationBuilders.terms("stateAgg").field("state").size(Integer.MAX_VALUE)).execute()
+				.addAggregation(AggregationBuilders.terms("Data_type").field("SOURCE").size(Integer.MAX_VALUE)).execute()
 				.actionGet();
 
 		// Get your facet results
-		Terms agg1 = sr.getAggregations().get("stateAgg");
+		Terms agg1 = sr.getAggregations().get("Data_type");
 
 		for (Terms.Bucket bucket : agg1.getBuckets()) {
 			System.out.println(bucket.getKey() + ": " + bucket.getDocCount());
