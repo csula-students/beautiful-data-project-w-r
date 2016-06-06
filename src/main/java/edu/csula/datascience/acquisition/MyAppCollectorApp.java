@@ -26,7 +26,7 @@ public class MyAppCollectorApp {
 	private final static String indexName = "bd-business";
 	private final static String TypeName = "Crime_Business";
 	private final static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
-	private final static String awsAddress = "http://search-cs594-qik4euzitw432ng3af3bhwc7qe.us-west-2.es.amazonaws.com";
+	private final static String awsAddress = "http://search-cs594-hw4-k3aklw5b3vkrwuakfxfjr4dnva.us-west-2.es.amazonaws.com";
 	
 	public static void main(String[] args) throws URISyntaxException {
 		
