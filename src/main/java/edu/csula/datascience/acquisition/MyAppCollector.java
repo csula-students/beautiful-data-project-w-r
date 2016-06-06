@@ -5,10 +5,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,15 @@ import org.apache.commons.csv.CSVRecord;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.index.IndexRequest;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+
+import io.searchbox.action.BulkableAction;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.config.HttpClientConfig;
+import io.searchbox.core.Bulk;
+import io.searchbox.core.Index;
 
 public class MyAppCollector {
 
@@ -533,6 +541,73 @@ public class MyAppCollector {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public void ToAWS(File filteredDataFile, String awsURL, String indx, String type ) {
+		
+		JestClientFactory factory = new JestClientFactory();
+        factory.setHttpClientConfig(new HttpClientConfig
+            .Builder(awsURL)
+            .multiThreaded(true)
+            .build());
+        JestClient jclient = factory.getObject();		
+		
+		try {
+            CSVParser parser = CSVParser.parse(
+            	filteredDataFile,
+                Charset.defaultCharset(),
+                CSVFormat.EXCEL.withHeader()
+            );
+            Collection<FilteredDataObject> data = Lists.newArrayList();
+
+            int count = 0;
+
+            for (CSVRecord record: parser) {
+                
+            	FilteredDataObject obj = new FilteredDataObject(record.get(HeaderListToAll[0]),record.get(HeaderListToAll[1]),record.get(HeaderListToAll[2])
+        				,record.get(HeaderListToAll[3]),record.get(HeaderListToAll[4]),record.get(HeaderListToAll[5]),record.get(HeaderListToAll[6]));
+
+                    if (count < 3000) {
+                        data.add(obj);
+                        count ++;
+                    } else {
+                        try {
+                            Collection<BulkableAction> actions = Lists.newArrayList();
+                            data.stream()
+                                .forEach(temp -> {
+                                    actions.add(new Index.Builder(temp).build());
+                                });
+                            Bulk.Builder bulk = new Bulk.Builder()
+                                .defaultIndex(indx)
+                                .defaultType(type)
+                                .addAction(actions);
+                            jclient.execute(bulk.build());
+                            count = 0;
+                            data = Lists.newArrayList();
+                            
+                            System.out.println("Inserted 500 documents to cloud | Record ends with # "+record.getRecordNumber());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+            }
+
+            Collection<BulkableAction> actions = Lists.newArrayList();
+            data.stream()
+                .forEach(temp -> {
+                    actions.add(new Index.Builder(temp).build());
+                });
+            Bulk.Builder bulk = new Bulk.Builder()
+                .defaultIndex(indx)
+                .defaultType(type)
+                .addAction(actions);
+            jclient.execute(bulk.build());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("We are done! Yay!");
+	}
 
 	// Extract zipcode from Crime file
 	public static String FilterZipCode(String zipCode) {
@@ -621,4 +696,6 @@ public class MyAppCollector {
 			return newlat + "," + newlog;
 		}
 	}
+
+	
 }

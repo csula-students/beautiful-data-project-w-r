@@ -26,7 +26,8 @@ public class MyAppCollectorApp {
 	private final static String indexName = "bd-business";
 	private final static String TypeName = "Crime_Business";
 	private final static String localPath = Paths.get("src/main/resources/").toAbsolutePath().toString() + "\\";
-
+	private final static String awsAddress = "http://search-cs594-qik4euzitw432ng3af3bhwc7qe.us-west-2.es.amazonaws.com";
+	
 	public static void main(String[] args) throws URISyntaxException {
 		
 		Node node = nodeBuilder()
@@ -83,10 +84,11 @@ public class MyAppCollectorApp {
 		}
 
 		// Upload to elasticsearch
-		collector.ToElasticSearch(FilteredDataFile,bulkProcessor,indexName,TypeName);
+		//collector.ToElasticSearch(FilteredDataFile,bulkProcessor,indexName,TypeName);
+
+		// Add to AWS "HW4"
+		collector.ToAWS(FilteredDataFile,awsAddress,indexName,TypeName);
 		
-		
-		// TODO Add to AWS FOR HW4
 	}
 
 	public static void aggregation(Node node, String indexName, String typeName) {

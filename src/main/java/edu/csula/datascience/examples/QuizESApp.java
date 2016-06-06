@@ -59,7 +59,7 @@ public class QuizESApp {
 
     public static void main(String[] args) throws URISyntaxException, IOException {
         Node node = nodeBuilder().settings(Settings.builder()
-            .put("cluster.name", "wael")
+            .put("cluster.name", "your-namex`")
             .put("path.home", "elasticsearch-data")).node();
         Client client = node.client();
 
