@@ -43,7 +43,7 @@ public class ElasticSearchExampleApp {
 
     public static void main(String[] args) throws URISyntaxException, IOException {
         Node node = nodeBuilder().settings(Settings.builder()
-            .put("cluster.name", "CS594team")
+            .put("cluster.name", "realEric")
             .put("path.home", "elasticsearch-data")).node();
         Client client = node.client();
 
@@ -117,7 +117,9 @@ public class ElasticSearchExampleApp {
                         record.get("Country")
                     );
 
-                    bulkProcessor.add(new IndexRequest(indexName, typeName).source(gson.toJson(temp)));
+                    bulkProcessor.add(new IndexRequest(indexName, typeName)
+                        .source(gson.toJson(temp))
+                    );
                 }
             });
         } catch (IOException e) {
