@@ -83,7 +83,7 @@ public class MyAppCollectorApp {
 			System.out.println("FILE " + FilteredDataFile.getName() + " EXISTS");
 		}
 
-		// Upload to elasticsearch
+		// Upload to elasticsearch "HW3"
 		//collector.ToElasticSearch(FilteredDataFile,bulkProcessor,indexName,TypeName);
 
 		// Add to AWS "HW4"

@@ -567,7 +567,7 @@ public class MyAppCollector {
             	FilteredDataObject obj = new FilteredDataObject(record.get(HeaderListToAll[0]),record.get(HeaderListToAll[1]),record.get(HeaderListToAll[2])
         				,record.get(HeaderListToAll[3]),record.get(HeaderListToAll[4]),record.get(HeaderListToAll[5]),record.get(HeaderListToAll[6]));
 
-                    if (count < 500) {
+                    if (count < 1000) {
                         data.add(obj);
                         count ++;
                     } else {
@@ -585,7 +585,7 @@ public class MyAppCollector {
                             count = 0;
                             data = Lists.newArrayList();
                             
-                            System.out.println("Inserted 500 documents to cloud | Record ends with # "+ record.getRecordNumber());
+                            System.out.println("Inserted 1000 documents to cloud | Record ends with # "+ record.getRecordNumber());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
